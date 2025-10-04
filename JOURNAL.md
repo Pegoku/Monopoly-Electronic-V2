@@ -24,3 +24,10 @@ For this project, I would like to have the following features:
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MjIzLCJwdXIiOiJibG9iX2lkIn19--acec19ab62acca159d49ddfaf8dba7544f570d4d/image.png)
   
 
+## 10/4/2025 - Research possible parts  
+
+I've been searching for the possible parts I could use for my project. I've seen many options, some more expensive, others cheaper. I have ended up selecting most of the parts from Digikey, due to the huge variety and fast shipping.
+I've created a [digikey list](https://www.digikey.es/en/mylists/list/QVK6J72RAV) with all the parts that will be used.
+[https://www.digikey.es/en/mylists/list/QVK6J72RAV](https://www.digikey.es/en/mylists/list/QVK6J72RAV)
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MzA4LCJwdXIiOiJibG9iX2lkIn19--0b9240eb16bade63ae4f7e63f3cec419b9b5fdcf/image.png)  
+
