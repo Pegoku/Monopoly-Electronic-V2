@@ -257,6 +257,12 @@
 		)
 	)
 	(junction
+		(at 140.97 87.63)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4d6869ad-cf98-4e53-a674-815f940419d0")
+	)
+	(junction
 		(at 148.59 87.63)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -273,6 +279,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "9ead42e4-2726-406c-893b-277ab4f55212")
+	)
+	(junction
+		(at 133.35 100.33)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b9713e3d-84ee-41ec-ab40-ede7eb17ff6b")
 	)
 	(wire
 		(pts
@@ -306,6 +318,16 @@
 	)
 	(wire
 		(pts
+			(xy 133.35 87.63) (xy 133.35 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b361500-d160-496c-b93e-f2bd3ff58b01")
+	)
+	(wire
+		(pts
 			(xy 125.73 95.25) (xy 148.59 95.25)
 		)
 		(stroke
@@ -336,6 +358,16 @@
 	)
 	(wire
 		(pts
+			(xy 133.35 93.98) (xy 133.35 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "56afbc6c-5759-4855-a5a9-c10e88dbcb12")
+	)
+	(wire
+		(pts
 			(xy 148.59 93.98) (xy 148.59 95.25)
 		)
 		(stroke
@@ -356,6 +388,26 @@
 	)
 	(wire
 		(pts
+			(xy 125.73 102.87) (xy 160.02 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ccb5c97-e65e-414b-a1b0-ef8f6c8774ba")
+	)
+	(wire
+		(pts
+			(xy 133.35 100.33) (xy 160.02 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8aee70ee-9e4d-430a-8e08-7194ac19e1c9")
+	)
+	(wire
+		(pts
 			(xy 148.59 95.25) (xy 160.02 95.25)
 		)
 		(stroke
@@ -363,6 +415,36 @@
 			(type default)
 		)
 		(uuid "a50df30e-6827-44c8-8495-95ee73f875ce")
+	)
+	(wire
+		(pts
+			(xy 125.73 100.33) (xy 133.35 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a95fcaf7-b347-47ce-9a45-fea730691a39")
+	)
+	(wire
+		(pts
+			(xy 125.73 105.41) (xy 160.02 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a9759826-f18a-4975-a984-1481810ad9e1")
+	)
+	(wire
+		(pts
+			(xy 133.35 87.63) (xy 140.97 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6b7e66b-014e-4d38-aa6a-739b41e7c0f9")
 	)
 	(symbol
 		(lib_id "Device:R_Small")
@@ -429,6 +511,76 @@
 			(project "MonpolyElectronicV2"
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
 					(reference "R10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 133.35 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3b365247-7a8d-45b1-8535-324bc6d08057")
+		(property "Reference" "R5"
+			(at 135.89 90.1699 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 135.89 92.7099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 133.35 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 133.35 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 133.35 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f569a03f-685b-4f23-92ec-47d9fa6b3d2e")
+		)
+		(pin "2"
+			(uuid "3f28025f-177f-4ac6-8c97-88312a6859f7")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
+					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -570,6 +722,76 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 144.78 72.39 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d6e620cb-732a-44c2-b119-ae31b526e7eb")
+		(property "Reference" "R4"
+			(at 147.32 71.1199 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 147.32 73.6599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 144.78 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 144.78 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 144.78 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8866ff78-c61a-46a0-984c-fa6e06293bb2")
+		)
+		(pin "2"
+			(uuid "f8fa0b08-340f-4890-9553-e536c4963f2c")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
 	(sheet
 		(at 160.02 88.9)
 		(size 25.4 25.4)
@@ -602,6 +824,36 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "OTG" input
+			(at 160.02 102.87 180)
+			(uuid "44418adc-3047-4041-9b3d-ba551879a19e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "INT" input
+			(at 160.02 100.33 180)
+			(uuid "7ded6cfc-d232-47e3-8b96-58d8c4f94be1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "{slash}CE" input
+			(at 160.02 105.41 180)
+			(uuid "23f60189-80af-40e4-adbf-367226ef79bc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
 		)
 		(pin "SDA" input
@@ -666,9 +918,39 @@
 				(justify left top)
 			)
 		)
+		(pin "OTG" input
+			(at 125.73 102.87 0)
+			(uuid "d629f960-fdcb-4105-a533-48c5ea68c995")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(pin "SCL" input
 			(at 125.73 97.79 0)
 			(uuid "8e7324ca-24c9-45eb-80a4-0b3c20e03dad")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "INT" input
+			(at 125.73 100.33 0)
+			(uuid "b189d730-1194-4c65-b02b-6d8386e9948e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "{slash}CE" input
+			(at 125.73 105.41 0)
+			(uuid "97b3241c-1a3f-4388-a4cf-57fa91e3aeb1")
 			(effects
 				(font
 					(size 1.27 1.27)
