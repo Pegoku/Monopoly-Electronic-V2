@@ -31,12 +31,21 @@ I've created a [digikey list](https://www.digikey.es/en/mylists/list/QVK6J72RAV)
 [https://www.digikey.es/en/mylists/list/QVK6J72RAV](https://www.digikey.es/en/mylists/list/QVK6J72RAV)
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MzA4LCJwdXIiOiJibG9iX2lkIn19--0b9240eb16bade63ae4f7e63f3cec419b9b5fdcf/image.png)  
 
-## 10/6/2025 - Work on the Power/battery part of the schematic  
+## 10/6/2025 9 AM - Work on the Power/battery part of the schematic  
 
 I have been working on the battery part of the schematic.
 I have wired most of the BQ25895RTWR, and USB-C port. Only the 3.3V buck is left.
 I arrived to the conclusion about not needing the 5V from the BQ25895RTWR, as everything will be running from 3.3V, so I disabled it.
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6NzE0LCJwdXIiOiJibG9iX2lkIn19--c7b7c4c570af7cf589eb0ea1267294ad9876ad36/image.png)
 
+  
+
+## 10/6/2025 6 PM - Work on the Logic part of the schematic  
+
+I've been working on the Logic part of the shematic. The programming part should be done, I used a vertical USB-C port I'll have hidden inside, and regular UART as a fallback.
+I also added an I2S Audio driver (MAX98357A) as I didn't want to just use PWM, but didn't need something too fancy for simple sound effects.
+Now I'll just need to add a display, which I'll be changing to a bigger one. Maybe, I'll get one with touch support
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6Nzk5LCJwdXIiOiJibG9iX2lkIn19--14abd72e738111fcc748ef354c70f33319b8ce4f/image.png)
   
 
