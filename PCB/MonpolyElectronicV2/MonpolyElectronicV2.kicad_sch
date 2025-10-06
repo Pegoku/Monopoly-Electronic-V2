@@ -366,6 +366,76 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
+		(at 140.97 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0ab2e484-1d26-4287-8fe4-961578935c25")
+		(property "Reference" "R5"
+			(at 143.51 90.1699 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 143.51 92.7099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 140.97 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 140.97 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 140.97 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c294886c-fb7f-43ce-9ddb-b0797e9cc37c")
+		)
+		(pin "2"
+			(uuid "3c5a1c09-6834-469e-84e0-b9f8944b6666")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
+					(reference "R5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
 		(at 148.59 91.44 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -373,8 +443,8 @@
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "3aa8d639-254c-4b2a-aa97-a525eeb81f38")
-		(property "Reference" "R10"
+		(uuid "6fbd074e-0864-4b3b-aeff-2f655628ca7f")
+		(property "Reference" "R6"
 			(at 151.13 90.1699 0)
 			(effects
 				(font
@@ -383,7 +453,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10k"
+		(property "Value" "4.7k"
 			(at 151.13 92.7099 0)
 			(effects
 				(font
@@ -420,15 +490,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "fa24fd54-5c1b-4723-b30f-0aff937aad18")
+			(uuid "243a4ba9-c4b7-4948-b571-a23b079640dc")
 		)
 		(pin "2"
-			(uuid "31701c29-825c-44a7-93d3-4c8b06c76b0d")
+			(uuid "79fbcd76-b88d-4960-a801-ad87345ab398")
 		)
 		(instances
 			(project "MonpolyElectronicV2"
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
-					(reference "R10")
+					(reference "R6")
 					(unit 1)
 				)
 			)
@@ -495,76 +565,6 @@
 			(project ""
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
 					(reference "#PWR04")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small")
-		(at 140.97 91.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c73bac08-6ba9-4e8b-a8c1-9dd700f277eb")
-		(property "Reference" "R6"
-			(at 143.51 90.1699 0)
-			(effects
-				(font
-					(size 1.016 1.016)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 143.51 92.7099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 140.97 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 140.97 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor, small symbol"
-			(at 140.97 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d6dec995-70ca-4145-9275-328b6dc2d591")
-		)
-		(pin "2"
-			(uuid "15a1f911-43d5-4f1b-8310-698ed11f0285")
-		)
-		(instances
-			(project "MonpolyElectronicV2"
-				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729"
-					(reference "R6")
 					(unit 1)
 				)
 			)
