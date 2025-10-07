@@ -49,3 +49,10 @@ Now I'll just need to add a display, which I'll be changing to a bigger one. May
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6Nzk5LCJwdXIiOiJibG9iX2lkIn19--14abd72e738111fcc748ef354c70f33319b8ce4f/image.png)
   
 
+## 10/7/2025 - Find a possible suitable LCD  
+
+After all, I decided for an SPI TFT LCD. I'll be going with a 3.2" touch ST7789 SPI display. it seems to be big enough, and have more than enough resolution for my project. Also, it seems to be supported with some libraries.
+It also has touch, just in case I ever want to use it.
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6OTY1LCJwdXIiOiJibG9iX2lkIn19--e2f55d6607eed39c33c7ea19f81d9cebff40fa22/image.png)
+  
+
