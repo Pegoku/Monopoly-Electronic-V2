@@ -4866,7 +4866,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 139.7 54.61 0)
 			(effects
 				(font
@@ -4935,7 +4935,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 69.85 100.33 0)
 			(effects
 				(font
@@ -5587,7 +5587,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 148.59 54.61 0)
 			(effects
 				(font
@@ -6052,7 +6052,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 124.46 109.22 0)
 			(effects
 				(font
@@ -6188,7 +6188,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 161.29 148.59 0)
 			(effects
 				(font
@@ -6406,7 +6406,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 166.37 113.03 0)
 			(effects
 				(font
@@ -6541,7 +6541,7 @@
 				)
 			)
 		)
-		(property "Footprint" "5.1k"
+		(property "Footprint" ""
 			(at 137.16 67.31 0)
 			(effects
 				(font
@@ -6755,7 +6755,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 87.63 100.33 0)
 			(effects
 				(font
@@ -6890,7 +6890,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Extra:WE-LQS_5040"
 			(at 66.04 87.63 0)
 			(effects
 				(font
@@ -7176,7 +7176,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 156.21 113.03 0)
 			(effects
 				(font
@@ -7471,7 +7471,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 105.41 119.38 0)
 			(effects
 				(font
@@ -7539,7 +7539,7 @@
 				)
 			)
 		)
-		(property "Footprint" "5.1k"
+		(property "Footprint" ""
 			(at 86.36 57.15 0)
 			(effects
 				(font
@@ -7683,7 +7683,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Extra:IND_SRP4020TA_BRN"
 			(at 146.05 110.49 0)
 			(effects
 				(font
@@ -7753,7 +7753,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 34.29 78.74 0)
 			(effects
 				(font
@@ -7822,7 +7822,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 78.74 100.33 0)
 			(effects
 				(font
@@ -8230,7 +8230,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 157.48 54.61 0)
 			(effects
 				(font
@@ -8366,7 +8366,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 176.53 113.03 0)
 			(effects
 				(font
@@ -8436,7 +8436,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
 			(at 34.29 87.63 0)
 			(effects
 				(font

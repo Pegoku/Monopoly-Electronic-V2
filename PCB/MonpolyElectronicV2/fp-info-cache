@@ -1,4 +1,4 @@
-26622150332004685
+26632709996905945
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -59682,6 +59682,27 @@ IND_LQH66SN680M03L
 2
 2
 Extra
+IND_SRP4020TA_BRN
+
+SRP4020TA-2R2M 
+0
+2
+2
+Extra
+IND_SRP4020TA_BRN-L
+
+SRP4020TA-2R2M 
+0
+2
+2
+Extra
+IND_SRP4020TA_BRN-M
+
+SRP4020TA-2R2M 
+0
+2
+2
+Extra
 MOLEX_2171820001
 
 
@@ -59709,6 +59730,13 @@ RIGADO_BMD-340-A-R
 0
 68
 68
+Extra
+SOT-23-231
+SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOT TO_SOT_SMD
+0
+3
+3
 Extra
 SW_B3F-3150_OMR
 
@@ -59751,6 +59779,13 @@ VL53LXX-V2
 0
 6
 6
+Extra
+WE-LQS_5040
+
+
+0
+2
+2
 Ferrite_THT
 LairdTech_28C0236-0JW-10
 Ferrite, vertical, LairdTech 28C0236-0JW-10, https://assets.lairdtech.com/home/brandworld/files/28C0236-0JW-10.pdf, JW Miller core https://www.bourns.com/products/magnetic-products/j.w.-miller-through-hole-ferrite-beads-emi-filters
@@ -105029,6 +105064,13 @@ IND-SMD_L10.0-W10.0_MDA1050-3R3M
 2
 easyeda2kicad
 IND-SMD_L11.0-W10.0
+
+
+0
+2
+2
+easyeda2kicad
+IND-SMD_L11.5-W10.0_104CDMCCDS
 
 
 0
