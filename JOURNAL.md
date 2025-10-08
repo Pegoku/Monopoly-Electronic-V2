@@ -56,3 +56,12 @@ It also has touch, just in case I ever want to use it.
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6OTY1LCJwdXIiOiJibG9iX2lkIn19--e2f55d6607eed39c33c7ea19f81d9cebff40fa22/image.png)
   
 
+## 10/8/2025 - Finish Schematic routing  
+
+I finished all the schematic routing (PCB, NFC, etc). The display seemed hard, but it really was just two SPI devices (Display and Touch).
+I think everything should be done now. I only need to select all components (resistors, capacitors, etc) so I can use the correct footprints.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTA4OCwicHVyIjoiYmxvYl9pZCJ9fQ==--851f0ca7bfb8b735c6e7955ee2edeada2a1cd695/image.png)
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTA4OSwicHVyIjoiYmxvYl9pZCJ9fQ==--1a8c17da541e9c366ac4a4dbd28944cfeae9f4e3/image.png)
+  
+
