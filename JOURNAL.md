@@ -31,7 +31,7 @@ I've created a [digikey list](https://www.digikey.es/en/mylists/list/QVK6J72RAV)
 [https://www.digikey.es/en/mylists/list/QVK6J72RAV](https://www.digikey.es/en/mylists/list/QVK6J72RAV)
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MzA4LCJwdXIiOiJibG9iX2lkIn19--0b9240eb16bade63ae4f7e63f3cec419b9b5fdcf/image.png)  
 
-## 10/6/2025 9 AM - Work on the Power/battery part of the schematic  
+## 10/6/2025 11 AM - Work on the Power/battery part of the schematic  
 
 I have been working on the battery part of the schematic.
 I have wired most of the BQ25895RTWR, and USB-C port. Only the 3.3V buck is left.
@@ -40,7 +40,7 @@ I arrived to the conclusion about not needing the 5V from the BQ25895RTWR, as ev
 
   
 
-## 10/6/2025 6 PM - Work on the Logic part of the schematic  
+## 10/6/2025 8 PM - Work on the Logic part of the schematic  
 
 I've been working on the Logic part of the shematic. The programming part should be done, I used a vertical USB-C port I'll have hidden inside, and regular UART as a fallback.
 I also added an I2S Audio driver (MAX98357A) as I didn't want to just use PWM, but didn't need something too fancy for simple sound effects.
@@ -63,5 +63,13 @@ I think everything should be done now. I only need to select all components (res
 
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTA4OCwicHVyIjoiYmxvYl9pZCJ9fQ==--851f0ca7bfb8b735c6e7955ee2edeada2a1cd695/image.png)
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTA4OSwicHVyIjoiYmxvYl9pZCJ9fQ==--1a8c17da541e9c366ac4a4dbd28944cfeae9f4e3/image.png)
+  
+
+## 10/10/2025 - Assign footprints + backlight driving options  
+
+I assigned all the necessary footprints to the symbols, and I also chose which parts I will be using for the PCB. I added all of them to the [Digikey BOM](https://www.digikey.es/en/mylists/list/QVK6J72RAV).
+Also, as I don't currently have the display, nor, know how the LED backlight is connected, I added multiple driving circuits. They are all disabled by default (have to use jumpers). And when I get all the components, I will use the correct driver method.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTQ4NywicHVyIjoiYmxvYl9pZCJ9fQ==--7fe742cb6c14c8efc263bc850236f809a692ff63/image.png)
   
 
