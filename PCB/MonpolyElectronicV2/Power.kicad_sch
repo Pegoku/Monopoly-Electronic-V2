@@ -3083,6 +3083,12 @@
 		(uuid "16faa522-2140-409a-8068-13d95278a4b3")
 	)
 	(junction
+		(at 91.44 133.35)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1b6c7b0a-5d47-4e28-9502-c67695577bc7")
+	)
+	(junction
 		(at 78.74 97.79)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3426,6 +3432,16 @@
 	)
 	(wire
 		(pts
+			(xy 81.28 133.35) (xy 91.44 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b7620b2-33cb-4edb-bc04-bd0894be63e8")
+	)
+	(wire
+		(pts
 			(xy 69.85 97.79) (xy 78.74 97.79)
 		)
 		(stroke
@@ -3673,6 +3689,16 @@
 			(type default)
 		)
 		(uuid "68cfd7c1-4737-4c8d-8410-8fbdd88d8441")
+	)
+	(wire
+		(pts
+			(xy 81.28 125.73) (xy 91.44 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6ad056d6-5ad7-4f64-946f-c483a9752f13")
 	)
 	(wire
 		(pts
@@ -5386,7 +5412,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 154.94 170.18 0)
 			(effects
 				(font
@@ -5695,6 +5721,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:LED")
+		(at 81.28 129.54 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "46115467-eb3c-4576-b56e-1210b68b7049")
+		(property "Reference" "D3"
+			(at 85.09 129.8574 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "LED"
+			(at 85.09 132.3974 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "LED_THT:LED_D5.0mm_Horizontal_O1.27mm_Z3.0mm"
+			(at 81.28 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 81.28 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Light emitting diode"
+			(at 81.28 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 81.28 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e0be2edf-f343-4e84-be5f-daea07c6a84d")
+		)
+		(pin "2"
+			(uuid "6d820d5f-9b16-4059-8d06-cb4cddc6225c")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/f3a0dc57-f483-416a-a0c7-91cb7e9a3802"
+					(reference "D3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 196.85 67.31 0)
 		(unit 1)
@@ -5918,7 +6023,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 49.53 73.66 0)
 			(effects
 				(font
@@ -6541,7 +6646,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 137.16 67.31 0)
 			(effects
 				(font
@@ -6618,7 +6723,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 133.35 76.2 0)
 			(effects
 				(font
@@ -6686,7 +6791,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 135.89 110.49 0)
 			(effects
 				(font
@@ -6960,7 +7065,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
 			(at 91.44 129.54 0)
 			(effects
 				(font
@@ -7106,7 +7211,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 166.37 168.91 0)
 			(effects
 				(font
@@ -7246,7 +7351,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 91.44 137.16 0)
 			(effects
 				(font
@@ -7539,7 +7644,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 86.36 57.15 0)
 			(effects
 				(font
@@ -7892,7 +7997,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 107.95 106.68 0)
 			(effects
 				(font
@@ -8160,7 +8265,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
 			(at 154.94 162.56 0)
 			(effects
 				(font
