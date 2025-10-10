@@ -5138,6 +5138,12 @@
 		(color 0 0 0 0)
 		(uuid "f5041ad5-c0bf-4089-b41c-8ae636da905f")
 	)
+	(junction
+		(at 242.57 139.7)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fc46535e-7229-498f-a80a-2420017afb08")
+	)
 	(no_connect
 		(at 161.29 100.33)
 		(uuid "1d971021-84f6-46e6-8655-0cb1696ebd4f")
@@ -5716,6 +5722,16 @@
 	)
 	(wire
 		(pts
+			(xy 238.76 134.62) (xy 250.19 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b789f5d-cd3e-42ef-87b3-1922d0d89ff1")
+	)
+	(wire
+		(pts
 			(xy 78.74 101.6) (xy 78.74 104.14)
 		)
 		(stroke
@@ -6043,6 +6059,16 @@
 			(type default)
 		)
 		(uuid "97c9234d-f932-4f26-b395-bea52679a561")
+	)
+	(wire
+		(pts
+			(xy 238.76 139.7) (xy 242.57 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "98287736-2303-419d-9d3b-bbd92f0b17a4")
 	)
 	(wire
 		(pts
@@ -6453,6 +6479,16 @@
 			(type default)
 		)
 		(uuid "ef6b11aa-dedc-4809-b6d7-21d82cc7fa6f")
+	)
+	(wire
+		(pts
+			(xy 242.57 139.7) (xy 250.19 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eff17aa4-759c-4ac6-ba17-73c8e91f8034")
 	)
 	(wire
 		(pts
@@ -7172,6 +7208,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "TFT_LED"
+		(shape input)
+		(at 245.11 134.62 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b4358722-b3e9-4abb-b73e-12a645c689e0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 245.11 124.1963 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -10259,6 +10317,76 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small")
+		(at 250.19 137.16 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "63313c92-64c6-44b1-9c54-9842469c0484")
+		(property "Reference" "C29"
+			(at 252.73 135.8962 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.1uF"
+			(at 252.73 138.4362 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 250.19 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 250.19 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 250.19 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "1c4eae9d-fc25-4b60-b873-0f4399310433")
+		)
+		(pin "1"
+			(uuid "e3b480c9-d2de-4fb2-9a87-c7946cc486d5")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "C29")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
 		(at 128.27 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -10455,6 +10583,72 @@
 			(project "MonpolyElectronicV2"
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
 					(reference "#PWR038")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 242.57 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "77ca796f-de1d-43b5-9655-9327ff7948af")
+		(property "Reference" "#PWR060"
+			(at 242.57 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 242.57 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 242.57 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 242.57 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 242.57 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "22241e3b-0a0b-4ba4-a614-320e63ad0812")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "#PWR060")
 					(unit 1)
 				)
 			)
@@ -13885,6 +14079,76 @@
 			(project "MonpolyElectronicV2"
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
 					(reference "FB2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
+		(at 238.76 137.16 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "f54fbc91-fb43-4fe0-9fe3-ac150eccbad2")
+		(property "Reference" "C28"
+			(at 241.3 135.8962 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10uF"
+			(at 241.3 138.4362 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 238.76 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 238.76 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 238.76 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "7cff9649-b10e-46d7-b83f-49aaa460ca42")
+		)
+		(pin "1"
+			(uuid "df146d3f-fb0f-4934-90f1-0a85d6b1a148")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "C28")
 					(unit 1)
 				)
 			)
