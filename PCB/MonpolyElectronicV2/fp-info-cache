@@ -1,4 +1,4 @@
-26636230508555023
+26637990753074081
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -59633,6 +59633,13 @@ MAX98360AENL+T
 9
 9
 Extra
+240X320 TFT 3.2 display
+Through hole straight pin header, 1x14, 2.54mm pitch, single row
+Through hole pin header THT 1x14 2.54mm single row
+0
+18
+18
+Extra
 1010-WS2812B
 
 
@@ -59771,7 +59778,7 @@ SW_TL1105BF160Q
 
 0
 4
-4
+2
 Extra
 TouchSlider-8_50x20mm
 

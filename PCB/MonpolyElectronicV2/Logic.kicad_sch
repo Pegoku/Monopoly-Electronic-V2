@@ -14509,7 +14509,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x14_P2.54mm_Vertical"
+		(property "Footprint" "Extra:240X320 TFT 3.2 display"
 			(at 265.43 90.17 0)
 			(effects
 				(font
