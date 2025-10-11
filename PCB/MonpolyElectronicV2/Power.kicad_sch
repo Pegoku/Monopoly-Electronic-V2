@@ -3072,7 +3072,7 @@
 	)
 	(rectangle
 		(start 19.05 104.14)
-		(end 133.35 193.04)
+		(end 157.48 193.04)
 		(stroke
 			(width 0)
 			(type default)
@@ -3187,6 +3187,12 @@
 		(uuid "f647e599-a06c-4ff8-a97e-d4d3e16ebf4c")
 	)
 	(junction
+		(at 118.11 121.92)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "043b2aed-a2ea-45a8-a52c-c433df27287a")
+	)
+	(junction
 		(at 243.84 142.24)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3211,6 +3217,12 @@
 		(uuid "29ee2d6b-7a57-4c82-9836-559b4bc0c107")
 	)
 	(junction
+		(at 129.54 121.92)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "2cdc1430-0ccc-4d17-8576-dd56768199e0")
+	)
+	(junction
 		(at 96.52 185.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3221,6 +3233,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3645607c-e45f-4fbf-b2d2-dc2663994f8f")
+	)
+	(junction
+		(at 129.54 129.54)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "40555b11-2942-44d7-ba1f-d5441a300c9e")
 	)
 	(junction
 		(at 218.44 121.92)
@@ -3251,6 +3269,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5e193397-abf8-4f4a-996a-a8d2e92b34a1")
+	)
+	(junction
+		(at 118.11 129.54)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "60538237-6ef3-47c3-92a5-c0d50c66009a")
 	)
 	(junction
 		(at 82.55 64.77)
@@ -3508,6 +3532,26 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 129.54) (xy 140.97 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "159d6f23-d39e-4530-813a-c20dfd71e828")
+	)
+	(wire
+		(pts
+			(xy 118.11 129.54) (xy 129.54 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1872cb77-8855-4d18-8f46-4267de584db7")
+	)
+	(wire
+		(pts
 			(xy 72.39 175.26) (xy 69.85 175.26)
 		)
 		(stroke
@@ -3615,6 +3659,16 @@
 			(type default)
 		)
 		(uuid "3d06f589-a924-4762-bb58-919742eea144")
+	)
+	(wire
+		(pts
+			(xy 140.97 129.54) (xy 140.97 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "406cc1a4-020d-477d-b3d6-476181d547a1")
 	)
 	(wire
 		(pts
@@ -3888,6 +3942,16 @@
 	)
 	(wire
 		(pts
+			(xy 129.54 127) (xy 129.54 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8164d570-379e-4a24-a6bc-99f98677881f")
+	)
+	(wire
+		(pts
 			(xy 82.55 62.23) (xy 82.55 63.5)
 		)
 		(stroke
@@ -3935,6 +3999,16 @@
 			(type default)
 		)
 		(uuid "91c00593-ec2f-4649-b9d5-64a69d0fadfe")
+	)
+	(wire
+		(pts
+			(xy 118.11 121.92) (xy 129.54 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94dd4f76-3e92-4aa9-90f4-0549c883c8fc")
 	)
 	(wire
 		(pts
@@ -3995,6 +4069,16 @@
 			(type default)
 		)
 		(uuid "b39adbb5-6c03-4df3-a01e-71d58cb67fc8")
+	)
+	(wire
+		(pts
+			(xy 129.54 121.92) (xy 140.97 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b74efda5-a913-42a6-8675-37791acc31a0")
 	)
 	(wire
 		(pts
@@ -6252,6 +6336,145 @@
 			(project "MonpolyElectronicV2"
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/f3a0dc57-f483-416a-a0c7-91cb7e9a3802"
 					(reference "#PWR02")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
+		(at 140.97 124.46 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4c14d6ec-8c0a-4b0f-83f0-8edea8ed32a9")
+		(property "Reference" "C30"
+			(at 143.51 125.7238 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "0.1uF"
+			(at 143.51 123.1838 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 140.97 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 140.97 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 140.97 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "16375a8f-c462-4a6b-b113-18fc0a3992fc")
+		)
+		(pin "2"
+			(uuid "62cd28a2-02b3-459a-b739-da4374907ff7")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/f3a0dc57-f483-416a-a0c7-91cb7e9a3802"
+					(reference "C30")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
+		(at 129.54 124.46 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4daa1298-489c-4bd9-a626-038600f2e922")
+		(property "Reference" "C31"
+			(at 132.08 123.1962 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1uF"
+			(at 132.08 125.7362 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 129.54 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 129.54 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 129.54 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c216ef2d-70b7-4eb2-a18d-ef234b26a6a6")
+		)
+		(pin "2"
+			(uuid "fca8a416-16e0-4f76-bfcd-55847d1841f5")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/f3a0dc57-f483-416a-a0c7-91cb7e9a3802"
+					(reference "C31")
 					(unit 1)
 				)
 			)
