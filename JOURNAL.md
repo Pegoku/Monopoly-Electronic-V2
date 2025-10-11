@@ -73,7 +73,7 @@ Also, as I don't currently have the display, nor, know how the LED backlight is 
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTQ4NywicHVyIjoiYmxvYl9pZCJ9fQ==--7fe742cb6c14c8efc263bc850236f809a692ff63/image.png)
   
 
-## 10/11/2025 - Groups to the schematic and start placing components  
+## 10/11/2025 10 AM - Groups to the schematic and start placing components  
 
 I have reordered the schematic so I can more easily reference the components and, at a glance, find them.
 I've used rectangles and text so I can name all the groups.
@@ -90,5 +90,12 @@ This is what I've got so far:
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTU4MCwicHVyIjoiYmxvYl9pZCJ9fQ==--169d6b0445e7d9922d86b3a8f356d8ae49de6306/image.png)
 
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTU4MSwicHVyIjoiYmxvYl9pZCJ9fQ==--b43b705a0e060a1ee9af0b758479d35e38313765/image.png)
+  
+
+## 10/11/2025 8 PM - Finish placing the components  
+
+I finished placing all the components in their "ideal" place. Due to the bigger than firstly planned display, the PCB ended up being 93.3 x 128.35 mm. which isn't a lot bigger than intented, but it will make the final device bigger, not a huge dealbreaker, though.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTY1NywicHVyIjoiYmxvYl9pZCJ9fQ==--fa6d358dd0e507c90559cd601e89f6fd34f58029/image.png)
   
 
