@@ -1,4 +1,4 @@
-26632709996905945
+26636230279502725
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -59738,6 +59738,13 @@ SOT TO_SOT_SMD
 3
 3
 Extra
+SW4_SKRPABE010_ALPS
+
+SKRPABE010 
+0
+4
+2
+Extra
 SW_B3F-3150_OMR
 
 B3F-3152 
@@ -59758,6 +59765,13 @@ Cherry MX keyswitch 1.00u PCB
 0
 4
 2
+Extra
+SW_TL1105BF160Q
+
+
+0
+4
+4
 Extra
 TouchSlider-8_50x20mm
 

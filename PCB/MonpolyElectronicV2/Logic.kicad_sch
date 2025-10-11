@@ -5273,6 +5273,12 @@
 		(uuid "54b9d7a5-8cf4-4825-8047-261203eaff2d")
 	)
 	(junction
+		(at 101.6 109.22)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "638032b5-acfe-4024-8d72-64ad413ece0e")
+	)
+	(junction
 		(at 38.1 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5882,6 +5888,16 @@
 	)
 	(wire
 		(pts
+			(xy 93.98 115.57) (xy 93.98 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52a0506c-cfe6-4649-9750-b49b1f025cb0")
+	)
+	(wire
+		(pts
 			(xy 224.79 33.02) (xy 223.52 33.02)
 		)
 		(stroke
@@ -6092,6 +6108,16 @@
 	)
 	(wire
 		(pts
+			(xy 93.98 110.49) (xy 93.98 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e164ac2-a8ce-4704-b44c-6b0104fb6d64")
+	)
+	(wire
+		(pts
 			(xy 133.35 66.04) (xy 139.7 66.04)
 		)
 		(stroke
@@ -6129,6 +6155,16 @@
 			(type default)
 		)
 		(uuid "82356aa0-1c88-4dc1-a828-88bfbfb2adaa")
+	)
+	(wire
+		(pts
+			(xy 101.6 115.57) (xy 101.6 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82960656-b8f9-439c-8eec-af42c83c7b40")
 	)
 	(wire
 		(pts
@@ -6249,6 +6285,16 @@
 			(type default)
 		)
 		(uuid "93cda42e-6259-4620-bc51-56f0514c8d1a")
+	)
+	(wire
+		(pts
+			(xy 93.98 109.22) (xy 101.6 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "946771ed-ff2a-49e5-8484-d6a403d9bfa1")
 	)
 	(wire
 		(pts
@@ -6449,6 +6495,16 @@
 			(type default)
 		)
 		(uuid "b69407bb-73b7-4dfb-a748-cde503c77973")
+	)
+	(wire
+		(pts
+			(xy 101.6 110.49) (xy 101.6 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b86cfcfc-380c-4d21-b794-a10e2bc289af")
 	)
 	(wire
 		(pts
@@ -7936,6 +7992,28 @@
 		)
 		(uuid "1e32cc3a-e731-4851-aef6-3fb780723081")
 	)
+	(hierarchical_label "SDA"
+		(shape input)
+		(at 93.98 119.38 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "804a22f1-c966-40da-8628-4ad89689809b")
+	)
+	(hierarchical_label "SCL"
+		(shape input)
+		(at 101.6 116.84 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9278ffb9-8e82-444a-92e3-2caf396ed968")
+	)
 	(hierarchical_label "SCL"
 		(shape input)
 		(at 140.97 26.67 270)
@@ -8289,6 +8367,76 @@
 			(project ""
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
 					(reference "SW1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 93.98 113.03 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0ab2e484-1d26-4287-8fe4-961578935c25")
+		(property "Reference" "R5"
+			(at 96.52 111.7599 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 96.52 114.2999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 93.98 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 93.98 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 93.98 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c294886c-fb7f-43ce-9ddb-b0797e9cc37c")
+		)
+		(pin "2"
+			(uuid "3c5a1c09-6834-469e-84e0-b9f8944b6666")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -10496,6 +10644,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_Small")
+		(at 101.6 113.03 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6fbd074e-0864-4b3b-aeff-2f655628ca7f")
+		(property "Reference" "R6"
+			(at 104.14 111.7599 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 104.14 114.2999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 101.6 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 101.6 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 101.6 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "243a4ba9-c4b7-4948-b571-a23b079640dc")
+		)
+		(pin "2"
+			(uuid "79fbcd76-b88d-4960-a801-ad87345ab398")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "R6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 105.41 172.72 90)
 		(unit 1)
@@ -12245,6 +12463,72 @@
 			(project ""
 				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
 					(reference "R11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3V")
+		(at 101.6 109.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b79bccf2-e8f9-46ac-a4b4-6a3d3f9056f5")
+		(property "Reference" "#PWR04"
+			(at 101.6 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.3V"
+			(at 101.6 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 101.6 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 101.6 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
+			(at 101.6 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fd9d0239-5b6f-4028-af06-f3003b335f3a")
+		)
+		(instances
+			(project "MonpolyElectronicV2"
+				(path "/d7c31a86-0f1d-461f-96b3-0b094256e729/c00ec276-a10d-444d-a8fa-1ff89a3842ef"
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
