@@ -99,3 +99,11 @@ I finished placing all the components in their "ideal" place. Due to the bigger 
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTY1NywicHVyIjoiYmxvYl9pZCJ9fQ==--fa6d358dd0e507c90559cd601e89f6fd34f58029/image.png)
   
 
+## 10/12/2025 - Start routing top part of the pcb  
+
+I have started routing part of the pcb. as I already had all the components placed, I only have to connect them, which isn't too hard. I'm also using copper pours for some parts of the pcb, eg. buck.
+For now, I've routed the usb charge connector, battery circuit and charger and buck.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTc3MywicHVyIjoiYmxvYl9pZCJ9fQ==--238f5ba1f21ce6e720fa20314c3cfcb254210f59/image.png)
+  
+
