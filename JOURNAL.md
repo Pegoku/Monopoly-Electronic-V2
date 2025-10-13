@@ -107,3 +107,12 @@ For now, I've routed the usb charge connector, battery circuit and charger and b
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTc3MywicHVyIjoiYmxvYl9pZCJ9fQ==--238f5ba1f21ce6e720fa20314c3cfcb254210f59/image.png)
   
 
+## 10/13/2025 - Finish routing the PCB  
+
+I finished routing all the PCB. It should now be done. I will now start designing the case. I will try to make it similar to the drawing I did before (first journal entry), while also having the essence of the original [Monopoly Electronic i have](https://imgs.search.brave.com/97KW8I4h7B_5Km5_sD36x9mR6GnvyAEScB285sH_O2Q/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL2lt/YWdlcy9nLzBPQUFB/T1N3aEExbWx3Y0sv/cy1sMTYwMC5qcGc).
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjAxMSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb93eb7295dc2d28987609c5be605dc25ee0b98e/image.png)
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjAxMiwicHVyIjoiYmxvYl9pZCJ9fQ==--01aa4716aa1cc6b3f2523bfb1cc3a741b3acdcf5/image.png)
+  
+
