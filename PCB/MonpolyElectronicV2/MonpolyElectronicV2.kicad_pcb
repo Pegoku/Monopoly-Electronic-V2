@@ -25416,6 +25416,17 @@
 			(uuid "bc57e156-82c6-4dda-8676-3791cdcb3582")
 		)
 		(embedded_fonts no)
+		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/BATTERY-SMD_18650-1S-L77.1-W20.7-1.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 90)
+			)
+		)
 	)
 	(gr_rect
 		(start 160.15 53.9)
@@ -25449,6 +25460,17 @@
 		(fill no)
 		(layer "F.SilkS")
 		(uuid "a69355ff-1c01-411e-a98b-9910f69950d3")
+	)
+	(gr_rect
+		(start 125 104.8)
+		(end 165 146.8)
+		(stroke
+			(width 0.1524)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "a724f09b-934b-4d4e-be94-998c083146e3")
 	)
 	(gr_rect
 		(start 159.25 79.75)

@@ -530,7 +530,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "MonpolyElectronicV2.step",
       "svg": "",
       "vrml": ""
     },
