@@ -116,3 +116,15 @@ I finished routing all the PCB. It should now be done. I will now start designin
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjAxMiwicHVyIjoiYmxvYl9pZCJ9fQ==--01aa4716aa1cc6b3f2523bfb1cc3a741b3acdcf5/image.png)
   
 
+## 10/15/2025 - Start Cadding  
+
+I have started the CAD design. I've added a speaker grill (spent too much time making it look good, battery pocket for easy battery replacement (if necessary) and pcb "rails" so the pcb can easily be mounted. 
+For now I'll be doing only the "raw" parts of the case. then I'll add more complex/visual features.
+
+This is what I've got so far:
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjMxMiwicHVyIjoiYmxvYl9pZCJ9fQ==--0d8cdc6870b64f8860d1e7892a952a13409a2e6f/image.png)
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjMxMywicHVyIjoiYmxvYl9pZCJ9fQ==--58001ee4425c202a23848bab1f298a2bcd48230a/image.png)
+  
+
