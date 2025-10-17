@@ -136,3 +136,19 @@ I've finished designing the base, and I've started designing the cover of the ca
 
 PS: this is going to be VERY overengineered... 😭  
 
+## 10/17/2025 - Finish CAD (Hopefully)  
+
+It took longer than expected, but, finally, after a lot of time and overengineering, I finished all the CAD!
+I tried to keep as many of the visual features as I could while making sure it actually works.
+I ~~think~~ know it could have been made a lot simpler, but I wanted to challenge myself.
+
+This is the final result.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjY1NywicHVyIjoiYmxvYl9pZCJ9fQ==--bc2c30c56350df59febc6f633cd2e3b3379b195d/image.png)
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjY1NiwicHVyIjoiYmxvYl9pZCJ9fQ==--c499de0187d5ce8f9409b72507ef98df3cee443f/image.png)
+
+
+
+  
+
