@@ -116,7 +116,7 @@ I finished routing all the PCB. It should now be done. I will now start designin
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjAxMiwicHVyIjoiYmxvYl9pZCJ9fQ==--01aa4716aa1cc6b3f2523bfb1cc3a741b3acdcf5/image.png)
   
 
-## 10/15/2025 - Start Cadding  
+## 10/15/2025 11 AM - Start Cadding  
 
 I have started the CAD design. I've added a speaker grill (spent too much time making it look good, battery pocket for easy battery replacement (if necessary) and pcb "rails" so the pcb can easily be mounted. 
 For now I'll be doing only the "raw" parts of the case. then I'll add more complex/visual features.
@@ -127,4 +127,12 @@ This is what I've got so far:
 
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjMxMywicHVyIjoiYmxvYl9pZCJ9fQ==--58001ee4425c202a23848bab1f298a2bcd48230a/image.png)
   
+
+## 10/15/2025 7 PM - Finish base and design clipping mechanism  
+
+I've finished designing the base, and I've started designing the cover of the case. I'm going with a "slide and click" mechanism. This way it will be easy to assemble, and also, there won't be any visible screws, which is a must (if I can) for this design.
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjM2NywicHVyIjoiYmxvYl9pZCJ9fQ==--01b66c19cb4fd9ebb5f6ad4cd1b2581ad5c9061c/image.png)
+
+PS: this is going to be VERY overengineered... 😭  
 
