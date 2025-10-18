@@ -23,7 +23,7 @@ This is a recreation of the classic Monopoly Electronic Banking game using moder
 ## BOM (Bill of Materials)
 | Index | MPN                      | Description                                          | pack quantity | price | TOTAL  |
 | ----- | ------------------------ | ---------------------------------------------------- | ------------- | ----- | ------ |
-| 1     | BQ25895RTWR              | IC BATT CHG LI-ION 1CELL 24WQFN                      | 2             | 6.58  | 165.5$ |
+| 1     | BQ25895RTWR              | IC BATT CHG LI-ION 1CELL 24WQFN                      | 2             | 6.58  | 178.39 |
 | 2     | TPS62162DSGR             | IC REG BUCK 3.3V 1A 8WSON                            | 2             | 3.14  |        |
 | 3     | RCLAMP7522T.TNT          | TVS DIODE 5VWM 25VC SLP1007N5T                       | 2             | 3.14  |        |
 | 4     | ESP32-S3-WROOM-1-N8R8    | RF TXRX MOD BT WIFI PCB TH SMD                       | 2             | 12.26 |        |
@@ -74,7 +74,7 @@ This is a recreation of the classic Monopoly Electronic Banking game using moder
 | 49    | 8R 0.5W 40mm Speaker     | https://es.aliexpress.com/item/1005007949154095.html | 1             | 3.51  |        |
 | 50    | 3.2" ST7789 with touch   | https://es.aliexpress.com/item/1005009929917954.html | 1             | 10.37 |        |
 | 51    | heatset insert pinecil   | https://es.aliexpress.com/item/1005008145530885.html | 1             | 11.89 |        |
-
+| 52    | Digikey VAT               |                                                       | 1             | 12.89 |        |
 
 ## License
 
