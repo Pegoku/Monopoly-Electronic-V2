@@ -152,3 +152,12 @@ This is the final result.
 
   
 
+## 10/18/2025 - Prepare GitHub Repo for submitting  
+
+I got the repo ready for submitting. Luckily I alredy had most of the files, exports, etc done. I just had to copy them to the correct folders, write a README.md, add images, check, export and convert to MarkDown the BOM, and write this journal entry.
+
+REPO: https://github.com/Pegoku/Monopoly-Electronic-V2
+
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6Mjk0NCwicHVyIjoiYmxvYl9pZCJ9fQ==--683aef26d92800a2d35e49b144c40e92dcc1ea82/image.png)
+  
+
