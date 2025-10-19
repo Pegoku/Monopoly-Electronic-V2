@@ -161,3 +161,12 @@ REPO: https://github.com/Pegoku/Monopoly-Electronic-V2
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6Mjk0NCwicHVyIjoiYmxvYl9pZCJ9fQ==--683aef26d92800a2d35e49b144c40e92dcc1ea82/image.png)
   
 
+## 10/19/2025 - Learning LVGL  
+
+I had to have some code for this project, so I could submit it, so I started to learn LVGL, so when I receive the parts, I can assemble them and can start to use it to test the display. I didn't do the full game for now, as I don't want to build it in regular cpp (not arduino framework) due to it maybe not working as intended on the final device.
+
+For now, I did a simple 5 button test. When a button is pressed, a random number is generated. This is a start, and I will be able to use what I learnt for this for the final build.
+![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MzUxOCwicHVyIjoiYmxvYl9pZCJ9fQ==--fc4028882cf5b11f71789f6a8ba2677a848adc7d/image.png)
+
+  
+
