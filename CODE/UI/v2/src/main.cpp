@@ -11,41 +11,14 @@
 #define TFT_MISO 13
 #define TFT_LED 21
 
+#define TFT_T_CS 17
+#define TFT_T_IRQ 18
+
 #define TFT_WIDTH 240
 #define TFT_HEIGHT 320
 
-constexpr uint32_t kColorHoldMs = 800;
-
-constexpr uint16_t kColorCycle[] = {
-    ST77XX_BLACK,
-    ST77XX_RED,
-    ST77XX_GREEN,
-    ST77XX_BLUE,
-    ST77XX_YELLOW,
-    ST77XX_MAGENTA,
-    ST77XX_CYAN,
-    ST77XX_WHITE};
-
-constexpr size_t kColorCount = sizeof(kColorCycle) / sizeof(kColorCycle[0]);
-
 Adafruit_ST7789 tft(&SPI, TFT_CS, TFT_DC, TFT_RST);
 
-void drawCenteredText(const char *msg, uint16_t color) {
-  tft.setTextColor(color);
-  tft.setTextSize(2);
-  tft.setTextWrap(false);
-
-  int16_t x1 = 0;
-  int16_t y1 = 0;
-  uint16_t w = 0;
-  uint16_t h = 0;
-  tft.getTextBounds(msg, 0, 0, &x1, &y1, &w, &h);
-
-  const int16_t x = (TFT_WIDTH - static_cast<int16_t>(w)) / 2 - x1;
-  const int16_t y = (TFT_HEIGHT - static_cast<int16_t>(h)) / 2 - y1;
-  tft.setCursor(x, y);
-  tft.print(msg);
-}
 
 void setup() {
   Serial.begin(115200);
@@ -54,29 +27,32 @@ void setup() {
   pinMode(TFT_LED, OUTPUT);
   digitalWrite(TFT_LED, HIGH);  // Turn on backlight
 
+  pinMode(TFT_T_CS, OUTPUT);
+  digitalWrite(TFT_T_CS, HIGH);  // Keep touch controller deselected when idle
+
+  pinMode(TFT_T_IRQ, INPUT_PULLUP);  // XPT2046-style controllers pull this low on touch
+
   SPI.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, TFT_CS);
 
   tft.init(TFT_WIDTH, TFT_HEIGHT);
   tft.setRotation(1);
   tft.fillScreen(ST77XX_BLACK);
-  drawCenteredText("Hello ST7789", ST77XX_WHITE);
 }
 
 void loop() {
-  static uint32_t lastSwitchMs = 0;
-  static size_t colorIndex = 0;
+  static bool lastTouch = false;
 
-  const uint32_t now = millis();
-  if (now - lastSwitchMs < kColorHoldMs) {
-    return;
+  tft.fillScreen(ST77XX_YELLOW);
+
+  const bool touchActive = (digitalRead(TFT_T_IRQ) == LOW);
+  if (touchActive != lastTouch) {
+    if (touchActive) {
+      Serial.println("Touch detected");
+    } else {
+      Serial.println("Touch released");
+    }
+    lastTouch = touchActive;
   }
 
-  lastSwitchMs = now;
-  const uint16_t bg = kColorCycle[colorIndex];
-  const uint16_t textColor = (bg == ST77XX_BLACK) ? ST77XX_WHITE : ST77XX_BLACK;
-
-  tft.fillScreen(bg);
-  drawCenteredText("Hello ST7789", textColor);
-
-  colorIndex = (colorIndex + 1U) % kColorCount;
+  delay(20);
 }
