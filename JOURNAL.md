@@ -6,10 +6,6 @@
   ==================================================================
 -->
 
-This is my journal of the design and building process of **Monopoly Electronic V2**.  
-You can view this journal in more detail on **Hack Club Blueprint** [here](https://blueprint.hackclub.com/projects/95).
-
-
 ## 10/3/2025 - Simple draft of the project  
 
 I drew a simple draft of the project. 
@@ -167,6 +163,15 @@ I had to have some code for this project, so I could submit it, so I started to 
 
 For now, I did a simple 5 button test. When a button is pressed, a random number is generated. This is a start, and I will be able to use what I learnt for this for the final build.
 ![image.png](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MzUxOCwicHVyIjoiYmxvYl9pZCJ9fQ==--fc4028882cf5b11f71789f6a8ba2677a848adc7d/image.png)
+
+  
+
+## 10/31/2025 - Tests before order  
+
+Before I order the PCB, I wanted to do some tests with the display, so I bought an esp32-S3 devboard and a display so I could learn LVGL, and check the schematic is correct.
+
+I was able to get the display to work!
+![PXL_20251030_213944654.MP](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6NjkzMSwicHVyIjoiYmxvYl9pZCJ9fQ==--a030996fdea4a48b562e5b0f547dd2fa549f276a/PXL_20251030_213944654.MP.jpg)
 
   
 
