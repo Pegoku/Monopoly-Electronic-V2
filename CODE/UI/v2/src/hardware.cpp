@@ -32,7 +32,7 @@ void hw_backlight(bool on) {
 static uint32_t _lastTouchMs = 0;
 
 void hw_initTouch() {
-    uint16_t calData[5] = {300, 3600, 300, 3600, 3};
+    uint16_t calData[5] = {300, 3600, 300, 3600, 1};   // last value must match tft.setRotation()
     tft.setTouch(calData);
     pinMode(PIN_TOUCH_IRQ, INPUT_PULLUP);
     DBG_PRINT("Touch init done");
