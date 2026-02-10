@@ -17,17 +17,20 @@ static const uint8_t MIFARE_KEY[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 // INIT
 // =============================================================================
 bool nfc_init() {
+    DBG_PRINT("NFC init start");
     Wire.begin(PIN_NFC_SDA, PIN_NFC_SCL);
     _nfc.begin();
     uint32_t ver = _nfc.getFirmwareVersion();
     if (!ver) {
         Serial.println(F("[NFC] PN532 not found"));
+        DBG_PRINT("NFC init FAILED - no response");
         _nfcOk = false;
         return false;
     }
     Serial.printf("[NFC] PN532 FW %d.%d\n", (ver >> 16) & 0xFF, (ver >> 8) & 0xFF);
     _nfc.SAMConfig();
     _nfcOk = true;
+    DBG_PRINT("NFC init OK");
     return true;
 }
 
@@ -38,7 +41,11 @@ bool nfc_available() { return _nfcOk; }
 // =============================================================================
 bool nfc_pollCard(uint8_t* uid, uint8_t* uidLen, uint16_t timeoutMs) {
     if (!_nfcOk) return false;
-    return _nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, uidLen, timeoutMs);
+    bool found = _nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, uidLen, timeoutMs);
+    if (found) {
+        DBG("NFC card detected, UID len=%d", *uidLen);
+    }
+    return found;
 }
 
 // =============================================================================

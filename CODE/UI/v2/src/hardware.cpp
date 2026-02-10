@@ -9,6 +9,7 @@ TFT_eSPI tft = TFT_eSPI();
 // DISPLAY
 // =============================================================================
 void hw_initDisplay() {
+    DBG_PRINT("Display init start");
     pinMode(PIN_TFT_BL, OUTPUT);
     digitalWrite(PIN_TFT_BL, HIGH);
 
@@ -16,6 +17,8 @@ void hw_initDisplay() {
     tft.setRotation(1);           // landscape
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.setTextSize(1);
+    DBG("Display init done: %dx%d rotation=%d", tft.width(), tft.height(), tft.getRotation());
 }
 
 void hw_backlight(bool on) {
@@ -31,6 +34,7 @@ static uint32_t _lastTouchMs = 0;
 void hw_initTouch() {
     tft.setTouch(_calData);
     pinMode(PIN_TOUCH_IRQ, INPUT_PULLUP);
+    DBG_PRINT("Touch init done");
 }
 
 TouchPoint hw_getTouch() {
@@ -64,6 +68,7 @@ void hw_initButtons() {
     for (int i = 0; i < 3; i++) {
         pinMode(_btnPins[i], INPUT_PULLUP);
     }
+    DBG_PRINT("Buttons init done");
 }
 
 BtnId hw_readButtons() {
@@ -98,6 +103,7 @@ static uint8_t     _volume    = 3;   // 0-5
 void hw_initAudio() {
     pinMode(PIN_SPEAKER, OUTPUT);
     noTone(PIN_SPEAKER);
+    DBG_PRINT("Audio init done");
 }
 
 void hw_setVolume(uint8_t vol) {

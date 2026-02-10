@@ -16,6 +16,7 @@ static void _shuffleArray(uint8_t* arr, uint8_t len) {
 // INIT / NEW GAME
 // =============================================================================
 void game_init() {
+    DBG_PRINT("game_init()");
     memset(&G, 0, sizeof(G));
     G.phase = PHASE_SPLASH;
     G.screenDirty = true;
@@ -32,6 +33,7 @@ void game_shuffleDecks() {
 }
 
 void game_newGame(uint8_t numPlayers) {
+    DBG("game_newGame: %d players", numPlayers);
     game_init();
     G.numPlayers = numPlayers;
     G.alivePlayers = numPlayers;
@@ -69,6 +71,7 @@ void game_rollDice() {
     G.dice2 = random(1, 7);
     G.isDoubles = (G.dice1 == G.dice2);
     G.players[G.currentPlayer].doublesCount += G.isDoubles ? 1 : 0;
+    DBG("rollDice: %d + %d = %d  doubles=%d", G.dice1, G.dice2, G.dice1+G.dice2, G.isDoubles);
 }
 
 void game_movePlayer() {
@@ -92,6 +95,7 @@ void game_movePlayer() {
     if (p.position == 0 && oldPos != 0) {
         p.money += GO_SALARY;
     }
+    DBG("movePlayer: P%d  %d -> %d  money=$%ld", G.currentPlayer, oldPos, p.position, p.money);
     G.phase = PHASE_MOVED;
     G.screenDirty = true;
 }
@@ -151,6 +155,7 @@ void game_resolveTile() {
             game_sendToJail(G.currentPlayer);
             break;
     }
+    DBG("resolveTile: pos=%d tile='%s' action=%d", p.position, tile.name, G.tileAction);
     G.phase = PHASE_TILE_ACTION;
     G.screenDirty = true;
 }
@@ -167,6 +172,7 @@ bool game_buyProperty(uint8_t playerIdx, uint8_t tileIdx) {
     p.money -= tile.price;
     G.props[tileIdx].owner = playerIdx;
     p.ownedTiles |= (1ULL << tileIdx);
+    DBG("buyProperty: P%d bought '%s' for $%d  balance=$%ld", playerIdx, tile.name, tile.price, p.money);
     return true;
 }
 
@@ -204,6 +210,7 @@ bool game_payRent(uint8_t fromPlayer, uint8_t tileIdx) {
     int8_t owner = G.props[tileIdx].owner;
     if (owner < 0 || rent <= 0) return false;
 
+    DBG("payRent: P%d pays $%ld to P%d for '%s'", fromPlayer, rent, owner, TILES[tileIdx].name);
     G.players[fromPlayer].money -= rent;
     G.players[owner].money += rent;
     game_checkBankruptcy(fromPlayer);
@@ -290,6 +297,7 @@ void game_collectFromBank(uint8_t playerIdx, int32_t amount) {
 // JAIL
 // =============================================================================
 void game_sendToJail(uint8_t playerIdx) {
+    DBG("sendToJail: P%d", playerIdx);
     Player& p = G.players[playerIdx];
     p.position = JAIL_POSITION;
     p.inJail   = true;
@@ -340,9 +348,11 @@ void game_drawCard(bool isChance) {
     if (isChance) {
         G.cardIndex = G.chanceDeck[G.chanceIdx];
         G.chanceIdx = (G.chanceIdx + 1) % NUM_CHANCE_CARDS;
+        DBG("drawCard: Chance #%d", G.cardIndex);
     } else {
         G.cardIndex = G.communityDeck[G.communityIdx];
         G.communityIdx = (G.communityIdx + 1) % NUM_COMMUNITY_CARDS;
+        DBG("drawCard: Community #%d", G.cardIndex);
     }
 }
 
@@ -497,7 +507,7 @@ bool game_executeTrade() {
 void game_endTurn() {
     Player& p = G.players[G.currentPlayer];
     if (G.isDoubles && p.alive && !p.inJail) {
-        // Roll again on doubles
+        DBG("endTurn: P%d rolls again (doubles)", G.currentPlayer);
         G.phase = PHASE_TURN_START;
         G.screenDirty = true;
         return;
@@ -507,12 +517,14 @@ void game_endTurn() {
         G.currentPlayer = (G.currentPlayer + 1) % G.numPlayers;
     } while (!G.players[G.currentPlayer].alive);
     G.turnNumber++;
+    DBG("endTurn: next=P%d  turn=%d", G.currentPlayer, G.turnNumber);
     game_startTurn();
 }
 
 void game_checkBankruptcy(uint8_t playerIdx) {
     Player& p = G.players[playerIdx];
     if (p.money < 0) {
+        DBG("BANKRUPT: P%d  money=$%ld", playerIdx, p.money);
         // For simplicity: auto-bankrupt (real game would offer mortgage/sell)
         // TODO: offer player chance to mortgage / sell before going bankrupt
         p.alive = false;

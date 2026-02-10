@@ -1,5 +1,6 @@
 #include "storage.h"
 #include <Preferences.h>
+#include "config.h"
 
 static Preferences prefs;
 
@@ -21,6 +22,7 @@ struct SaveHeader {
 };
 
 bool storage_saveGame() {
+    DBG_PRINT("storage_saveGame()");
     prefs.begin("monopoly", false);
 
     // Header
@@ -50,11 +52,13 @@ bool storage_saveGame() {
     prefs.putBytes("settings", &G.settings, sizeof(GameSettings));
 
     prefs.end();
+    DBG("storage_saveGame: saved %d players, turn %d", G.numPlayers, G.turnNumber);
     Serial.println(F("[STORAGE] Game saved"));
     return true;
 }
 
 bool storage_loadGame() {
+    DBG_PRINT("storage_loadGame()");
     prefs.begin("monopoly", true);
 
     SaveHeader hdr;
@@ -84,6 +88,7 @@ bool storage_loadGame() {
     prefs.end();
     G.phase = PHASE_TURN_START;
     G.screenDirty = true;
+    DBG("storage_loadGame: loaded %d players, turn %d", G.numPlayers, G.turnNumber);
     Serial.println(F("[STORAGE] Game loaded"));
     return true;
 }
@@ -94,10 +99,12 @@ bool storage_hasSavedGame() {
     bool ok = (prefs.getBytes("hdr", &hdr, sizeof(hdr)) == sizeof(hdr))
               && hdr.magic == 0x4D4F4E4F;
     prefs.end();
+    DBG("storage_hasSavedGame: %s", ok ? "yes" : "no");
     return ok;
 }
 
 void storage_clearSave() {
+    DBG_PRINT("storage_clearSave()");
     prefs.begin("monopoly", false);
     prefs.clear();
     prefs.end();

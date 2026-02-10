@@ -2,6 +2,21 @@
 #include <Arduino.h>
 
 // =============================================================================
+// DEBUG
+// =============================================================================
+#ifndef DEBUG
+  #define DEBUG 0
+#endif
+
+#if DEBUG
+  #define DBG(fmt, ...)   Serial.printf("[DBG] " fmt "\n", ##__VA_ARGS__)
+  #define DBG_PRINT(msg)  Serial.println(F("[DBG] " msg))
+#else
+  #define DBG(fmt, ...)   ((void)0)
+  #define DBG_PRINT(msg)  ((void)0)
+#endif
+
+// =============================================================================
 // PIN DEFINITIONS
 // =============================================================================
 

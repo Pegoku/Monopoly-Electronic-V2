@@ -2,6 +2,7 @@
 #include "hardware.h"
 #include "nfc_handler.h"
 #include "storage.h"
+#include "config.h"
 #include <TFT_eSPI.h>
 
 // =============================================================================
@@ -1594,10 +1595,21 @@ void ui_init() {
 }
 
 void ui_update() {
+    static GamePhase _lastPhase = (GamePhase)-1;
     _frameTime = millis();
     _tp  = hw_getTouch();
     _btn = hw_readButtons();
     _touchConsumed = false;
+
+    if (G.phase != _lastPhase) {
+        DBG("UI phase: %d -> %d", (int)_lastPhase, (int)G.phase);
+        _lastPhase = G.phase;
+    }
+
+#if DEBUG
+    if (_tp.pressed) DBG("touch: x=%d y=%d", _tp.x, _tp.y);
+    if (_btn != BTN_NONE) DBG("button: %d", (int)_btn);
+#endif
 
     // Check for long-press center → programming mode (from any game screen)
     if (hw_isBtnHeld(BTN_CENTER, 3000) && G.phase >= PHASE_TURN_START && G.phase <= PHASE_QUICK_MENU) {
