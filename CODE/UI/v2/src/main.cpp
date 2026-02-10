@@ -1,58 +1,54 @@
+// =============================================================================
+// MONOPOLY ELECTRONIC V2 — Main entry point
+// =============================================================================
 #include <Arduino.h>
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7789.h>
-
-#define TFT_CS 14
-#define TFT_DC 16
-#define TFT_RST 38
-#define TFT_SCLK 12
-#define TFT_MOSI 11
-#define TFT_MISO 13
-#define TFT_LED 21
-
-#define TFT_T_CS 17
-#define TFT_T_IRQ 18
-
-#define TFT_WIDTH 240
-#define TFT_HEIGHT 320
-
-Adafruit_ST7789 tft(&SPI, TFT_CS, TFT_DC, TFT_RST);
-
+#include "config.h"
+#include "hardware.h"
+#include "nfc_handler.h"
+#include "game_logic.h"
+#include "storage.h"
+#include "ui.h"
 
 void setup() {
-  Serial.begin(115200);
-  delay(100);
+    Serial.begin(115200);
+    delay(200);
+    Serial.println(F("\n=== Monopoly Electronic V2 ==="));
 
-  pinMode(TFT_LED, OUTPUT);
-  digitalWrite(TFT_LED, HIGH);  // Turn on backlight
+    // Seed RNG
+    randomSeed(analogRead(0) ^ (millis() << 8));
 
-  pinMode(TFT_T_CS, OUTPUT);
-  digitalWrite(TFT_T_CS, HIGH);  // Keep touch controller deselected when idle
+    // Hardware init
+    hw_initDisplay();
+    hw_initTouch();
+    hw_initButtons();
+    hw_initAudio();
 
-  pinMode(TFT_T_IRQ, INPUT_PULLUP);  // XPT2046-style controllers pull this low on touch
+    // NFC (non-blocking — game works without it)
+    if (nfc_init()) {
+        Serial.println(F("[INIT] NFC ready"));
+    } else {
+        Serial.println(F("[INIT] NFC not detected — continuing without NFC"));
+    }
 
-  SPI.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, TFT_CS);
+    // Load saved settings (if any)
+    storage_loadSettings(G.settings);
+    hw_setVolume(G.settings.volume);
 
-  tft.init(TFT_WIDTH, TFT_HEIGHT);
-  tft.setRotation(1);
-  tft.fillScreen(ST77XX_BLACK);
+    // Init game state
+    game_init();
+    G.phase = PHASE_SPLASH;
+
+    // Init UI
+    ui_init();
+
+    // Startup jingle
+    hw_playJingle();
+
+    Serial.println(F("[INIT] Ready"));
 }
 
 void loop() {
-  static bool lastTouch = false;
-
-  tft.fillScreen(ST77XX_YELLOW);
-
-  const bool touchActive = (digitalRead(TFT_T_IRQ) == LOW);
-  if (touchActive != lastTouch) {
-    if (touchActive) {
-      Serial.println("Touch detected");
-    } else {
-      Serial.println("Touch released");
-    }
-    lastTouch = touchActive;
-  }
-
-  delay(20);
+    hw_updateAudio();       // advance non-blocking melodies
+    ui_update();            // draw + handle input
+    delay(16);              // ~60 fps cap
 }
