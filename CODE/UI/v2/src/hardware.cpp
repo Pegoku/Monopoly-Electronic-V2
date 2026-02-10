@@ -1,4 +1,5 @@
 #include "hardware.h"
+#include <lvgl.h>
 
 // =============================================================================
 // GLOBALS
@@ -28,11 +29,11 @@ void hw_backlight(bool on) {
 // =============================================================================
 // TOUCH  (XPT2046 via TFT_eSPI built-in driver)
 // =============================================================================
-static uint16_t _calData[5] = {300, 3600, 300, 3600, 3};
 static uint32_t _lastTouchMs = 0;
 
 void hw_initTouch() {
-    tft.setTouch(_calData);
+    uint16_t calData[5] = {300, 3600, 300, 3600, 3};
+    tft.setTouch(calData);
     pinMode(PIN_TOUCH_IRQ, INPUT_PULLUP);
     DBG_PRINT("Touch init done");
 }
@@ -182,3 +183,94 @@ static const Note _jail[] = {
     {400,150},{300,150},{200,300}
 };
 void hw_playJail()    { hw_playMelody(_jail, 3); }
+
+// =============================================================================
+// LVGL DISPLAY + INPUT DRIVERS
+// =============================================================================
+
+// Draw buffer (1/10 of screen, 2 bytes per pixel for RGB565)
+#define DRAW_BUF_LINES 24
+static uint8_t _lvBuf[SCREEN_W * DRAW_BUF_LINES * sizeof(lv_color16_t)];
+
+// Display flush callback: push rendered pixels to TFT via SPI
+static void _lvgl_flush_cb(lv_display_t* disp, const lv_area_t* area, uint8_t* px_map) {
+    uint32_t w = area->x2 - area->x1 + 1;
+    uint32_t h = area->y2 - area->y1 + 1;
+    tft.startWrite();
+    tft.setAddrWindow(area->x1, area->y1, w, h);
+    tft.pushColors((uint16_t*)px_map, w * h, true);   // true = swap bytes for SPI
+    tft.endWrite();
+    lv_display_flush_ready(disp);
+}
+
+// Touch input read callback
+static uint16_t _calData[5] = {300, 3600, 300, 3600, 3};
+
+static void _lvgl_touch_read_cb(lv_indev_t* indev, lv_indev_data_t* data) {
+    uint16_t tx, ty;
+    if (tft.getTouch(&tx, &ty, 40)) {
+        data->point.x = tx;
+        data->point.y = ty;
+        data->state   = LV_INDEV_STATE_PRESSED;
+    } else {
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
+}
+
+// Keypad (3 physical buttons) read callback
+static uint32_t _lastKey = 0;
+
+static void _lvgl_keypad_read_cb(lv_indev_t* indev, lv_indev_data_t* data) {
+    BtnId btn = hw_readButtons();
+    if (btn != BTN_NONE) {
+        switch (btn) {
+            case BTN_LEFT:   _lastKey = LV_KEY_LEFT;  break;
+            case BTN_CENTER: _lastKey = LV_KEY_ENTER; break;
+            case BTN_RIGHT:  _lastKey = LV_KEY_RIGHT; break;
+            default: break;
+        }
+        data->state = LV_INDEV_STATE_PRESSED;
+    } else {
+        data->state = LV_INDEV_STATE_RELEASED;
+    }
+    data->key = _lastKey;
+}
+
+// LVGL tick source (using Arduino millis)
+static uint32_t _lvgl_tick_cb(void) {
+    return millis();
+}
+
+// LVGL group for button navigation
+static lv_group_t* _defaultGroup = nullptr;
+
+void hw_lvgl_init() {
+    DBG_PRINT("LVGL init start");
+
+    lv_init();
+    lv_tick_set_cb(_lvgl_tick_cb);
+
+    // --- Display driver ---
+    lv_display_t* disp = lv_display_create(SCREEN_W, SCREEN_H);
+    lv_display_set_buffers(disp, _lvBuf, NULL, sizeof(_lvBuf),
+                           LV_DISPLAY_RENDER_MODE_PARTIAL);
+    lv_display_set_flush_cb(disp, _lvgl_flush_cb);
+    DBG("LVGL display: %dx%d, buf=%u bytes", SCREEN_W, SCREEN_H, (unsigned)sizeof(_lvBuf));
+
+    // --- Touch input device ---
+    lv_indev_t* touch_indev = lv_indev_create();
+    lv_indev_set_type(touch_indev, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(touch_indev, _lvgl_touch_read_cb);
+
+    // --- Keypad input device (3 buttons) ---
+    lv_indev_t* keypad_indev = lv_indev_create();
+    lv_indev_set_type(keypad_indev, LV_INDEV_TYPE_KEYPAD);
+    lv_indev_set_read_cb(keypad_indev, _lvgl_keypad_read_cb);
+
+    // --- Default group for button navigation ---
+    _defaultGroup = lv_group_create();
+    lv_group_set_default(_defaultGroup);
+    lv_indev_set_group(keypad_indev, _defaultGroup);
+
+    DBG_PRINT("LVGL init done");
+}

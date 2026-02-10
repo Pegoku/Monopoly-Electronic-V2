@@ -1,15 +1,21 @@
 #pragma once
 #include <Arduino.h>
 #include <TFT_eSPI.h>
+#include <lvgl.h>
 #include "config.h"
 
 // =============================================================================
-// DISPLAY
+// DISPLAY (TFT_eSPI used as LVGL backend)
 // =============================================================================
 extern TFT_eSPI tft;
 
 void     hw_initDisplay();
 void     hw_backlight(bool on);
+
+// =============================================================================
+// LVGL DRIVERS  (display flush + touch + keypad)
+// =============================================================================
+void     hw_lvgl_init();           // Call AFTER hw_initDisplay + hw_initTouch + hw_initButtons
 
 // =============================================================================
 // TOUCH
@@ -31,7 +37,7 @@ enum BtnId : uint8_t { BTN_NONE = 0, BTN_LEFT, BTN_CENTER, BTN_RIGHT };
 
 void  hw_initButtons();
 BtnId hw_readButtons();                         // debounced, single-press
-bool  hw_isBtnHeld(BtnId b, uint32_t ms);      // true while held ≥ ms
+bool  hw_isBtnHeld(BtnId b, uint32_t ms);      // true while held >= ms
 
 // =============================================================================
 // AUDIO  (non-blocking melody system)

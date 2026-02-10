@@ -2,6 +2,7 @@
 // MONOPOLY ELECTRONIC V2 — Main entry point
 // =============================================================================
 #include <Arduino.h>
+#include <lvgl.h>
 #include "config.h"
 #include "hardware.h"
 #include "nfc_handler.h"
@@ -23,6 +24,9 @@ void setup() {
     hw_initButtons();
     hw_initAudio();
 
+    // LVGL framework (must be after display + touch + buttons)
+    hw_lvgl_init();
+
     // NFC (non-blocking — game works without it)
     if (nfc_init()) {
         Serial.println(F("[INIT] NFC ready"));
@@ -38,7 +42,7 @@ void setup() {
     game_init();
     G.phase = PHASE_SPLASH;
 
-    // Init UI
+    // Init UI (LVGL screens)
     ui_init();
 
     // Startup jingle
@@ -49,6 +53,7 @@ void setup() {
 
 void loop() {
     hw_updateAudio();       // advance non-blocking melodies
-    ui_update();            // draw + handle input
-    delay(16);              // ~60 fps cap
+    ui_update();            // react to game state changes
+    lv_timer_handler();     // LVGL rendering + event processing
+    delay(5);               // yield
 }
