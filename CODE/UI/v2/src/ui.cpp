@@ -17,6 +17,14 @@
 #define FONT_XL  &lv_font_montserrat_28
 
 // =============================================================================
+// TOKEN SHAPES (for player identification)
+// =============================================================================
+static const char* TOKEN_NAMES[MAX_PLAYERS] = {
+    "Car", "Hat", "Ship", "Boot",
+    "Dog", "Star", "Plane", "Iron"
+};
+
+// =============================================================================
 // COLOR HELPERS
 // =============================================================================
 // Convert RGB565 (game_data / config) to lv_color_t
@@ -63,6 +71,7 @@ static uint8_t   _progMode     = 0;  // 0=select, 1=player, 2=property, 3=event
 static uint8_t   _progStep     = 0;
 static int8_t    _settSel      = 0;
 static uint8_t   _propIdx      = 1;  // For programming mode property selection
+static uint8_t   _progTokenIdx = 0;  // Token shape selection for programming
 
 // Timers
 static lv_timer_t* _activeTimer  = nullptr;
@@ -77,62 +86,113 @@ static void _clearTimers() {
 // STATUS OVERLAY (battery / charging)
 // =============================================================================
 static lv_obj_t* _statusCont = nullptr;
-static lv_obj_t* _statusIcon = nullptr;
-static lv_obj_t* _statusLbl  = nullptr;
+static lv_obj_t* _battBody   = nullptr;
+static lv_obj_t* _battFill   = nullptr;
+static lv_obj_t* _battNub    = nullptr;
+static lv_obj_t* _battBolt   = nullptr;
+static uint8_t   _lastBattPct      = 255;
+static bool      _lastBattCharging = false;
+static bool      _lastBattPresent  = false;
 
 static void _initStatusOverlay() {
+    // Clean the top layer to prevent theme-induced white bar
     lv_obj_t* layer = lv_layer_top();
+    lv_obj_set_style_bg_opa(layer, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(layer, 0, 0);
+    lv_obj_set_style_pad_all(layer, 0, 0);
+    lv_obj_set_scrollbar_mode(layer, LV_SCROLLBAR_MODE_OFF);
+
     _statusCont = lv_obj_create(layer);
     lv_obj_remove_style_all(_statusCont);
-    lv_obj_set_size(_statusCont, 108, 26);
-    lv_obj_align(_statusCont, LV_ALIGN_TOP_RIGHT, -6, 4);
-    lv_obj_set_style_bg_color(_statusCont, lv_color_mix(C_BG, C_BTN_BG, LV_OPA_50), 0);
-    lv_obj_set_style_bg_opa(_statusCont, LV_OPA_80, 0);
-    lv_obj_set_style_radius(_statusCont, 12, 0);
-    lv_obj_set_style_border_width(_statusCont, 1, 0);
-    lv_obj_set_style_border_color(_statusCont, C_PRIMARY, 0);
+    lv_obj_set_size(_statusCont, 48, 22);
+    lv_obj_align(_statusCont, LV_ALIGN_TOP_RIGHT, -4, 2);
+    lv_obj_set_style_bg_color(_statusCont, C_BG, 0);
+    lv_obj_set_style_bg_opa(_statusCont, LV_OPA_50, 0);
+    lv_obj_set_style_radius(_statusCont, 4, 0);
     lv_obj_set_scrollbar_mode(_statusCont, LV_SCROLLBAR_MODE_OFF);
 
-    _statusIcon = lv_label_create(_statusCont);
-    lv_label_set_text(_statusIcon, "");
-    lv_obj_set_style_text_color(_statusIcon, C_ACCENT, 0);
-    lv_obj_set_style_text_font(_statusIcon, FONT_MD, 0);
-    lv_obj_align(_statusIcon, LV_ALIGN_LEFT_MID, 6, 0);
+    // Battery body outline
+    _battBody = lv_obj_create(_statusCont);
+    lv_obj_remove_style_all(_battBody);
+    lv_obj_set_size(_battBody, 36, 16);
+    lv_obj_set_pos(_battBody, 2, 3);
+    lv_obj_set_style_border_width(_battBody, 2, 0);
+    lv_obj_set_style_border_color(_battBody, C_TEXT_DIM, 0);
+    lv_obj_set_style_border_opa(_battBody, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(_battBody, 3, 0);
+    lv_obj_set_style_bg_opa(_battBody, LV_OPA_TRANSP, 0);
+    lv_obj_set_scrollbar_mode(_battBody, LV_SCROLLBAR_MODE_OFF);
 
-    _statusLbl = lv_label_create(_statusCont);
-    lv_label_set_text(_statusLbl, "--%");
-    lv_obj_set_style_text_color(_statusLbl, C_TEXT, 0);
-    lv_obj_set_style_text_font(_statusLbl, FONT_MD, 0);
-    lv_obj_align(_statusLbl, LV_ALIGN_RIGHT_MID, -8, 0);
+    // Positive terminal nub
+    _battNub = lv_obj_create(_statusCont);
+    lv_obj_remove_style_all(_battNub);
+    lv_obj_set_size(_battNub, 4, 8);
+    lv_obj_set_pos(_battNub, 38, 7);
+    lv_obj_set_style_bg_color(_battNub, C_TEXT_DIM, 0);
+    lv_obj_set_style_bg_opa(_battNub, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(_battNub, 1, 0);
+
+    // Fill bar (inside body)
+    _battFill = lv_obj_create(_statusCont);
+    lv_obj_remove_style_all(_battFill);
+    lv_obj_set_pos(_battFill, 5, 6);
+    lv_obj_set_size(_battFill, 30, 10);
+    lv_obj_set_style_bg_color(_battFill, C_BTN_ACTIVE, 0);
+    lv_obj_set_style_bg_opa(_battFill, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(_battFill, 1, 0);
+
+    // Charging bolt indicator (initially hidden)
+    _battBolt = lv_label_create(_statusCont);
+    lv_label_set_text(_battBolt, LV_SYMBOL_CHARGE);
+    lv_obj_set_style_text_color(_battBolt, C_TEXT, 0);
+    lv_obj_set_style_text_font(_battBolt, FONT_SM, 0);
+    lv_obj_set_pos(_battBolt, 12, 4);
+    lv_obj_add_flag(_battBolt, LV_OBJ_FLAG_HIDDEN);
 }
 
 static void _refreshStatusOverlay() {
     if (!_statusCont) return;
     BatteryInfo bi = hw_getBatteryInfo();
 
-    char buf[12];
+    // Only update on change to avoid flicker
+    if (bi.present == _lastBattPresent &&
+        bi.percent == _lastBattPct &&
+        bi.charging == _lastBattCharging) return;
+
+    _lastBattPresent  = bi.present;
+    _lastBattPct      = bi.percent;
+    _lastBattCharging = bi.charging;
+
     if (!bi.present) {
-        snprintf(buf, sizeof(buf), "--%%");
-        lv_obj_set_style_text_color(_statusLbl, C_TEXT_DIM, 0);
-        lv_label_set_text(_statusIcon, "");
-    } else {
-        uint8_t pct = bi.percent;
-        snprintf(buf, sizeof(buf), "%d%%", pct);
-
-        lv_color_t col = (pct >= 60) ? C_ACCENT : (pct >= 25 ? C_WARN : C_DANGER);
-        lv_obj_set_style_text_color(_statusLbl, col, 0);
-
-        if (bi.charging) {
-            lv_label_set_text(_statusIcon, LV_SYMBOL_CHARGE);
-            lv_obj_set_style_text_color(_statusIcon, C_ACCENT, 0);
-        } else if (bi.powerGood) {
-            lv_label_set_text(_statusIcon, LV_SYMBOL_POWER);
-            lv_obj_set_style_text_color(_statusIcon, C_PRIMARY, 0);
-        } else {
-            lv_label_set_text(_statusIcon, "");
-        }
+        lv_obj_set_style_border_color(_battBody, C_TEXT_DIM, 0);
+        lv_obj_set_style_bg_color(_battNub, C_TEXT_DIM, 0);
+        lv_obj_set_size(_battFill, 0, 10);
+        lv_obj_add_flag(_battBolt, LV_OBJ_FLAG_HIDDEN);
+        return;
     }
-    lv_label_set_text(_statusLbl, buf);
+
+    uint8_t pct = bi.percent;
+    // Fill width proportional to charge (max 30px)
+    int16_t fw = (int16_t)((uint16_t)pct * 30 / 100);
+    if (fw < 1 && pct > 0) fw = 1;
+    lv_obj_set_size(_battFill, fw, 10);
+
+    // Color by charge level
+    lv_color_t col;
+    if (pct >= 60)      col = C_BTN_ACTIVE;   // green
+    else if (pct >= 25) col = C_WARN;          // yellow
+    else                col = C_DANGER;        // red
+
+    lv_obj_set_style_bg_color(_battFill, col, 0);
+    lv_obj_set_style_border_color(_battBody, col, 0);
+    lv_obj_set_style_bg_color(_battNub, col, 0);
+
+    // Charging bolt
+    if (bi.charging) {
+        lv_obj_remove_flag(_battBolt, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(_battBolt, LV_OBJ_FLAG_HIDDEN);
+    }
 }
 
 // =============================================================================
@@ -150,8 +210,11 @@ static lv_obj_t* _newScreen() {
     lv_obj_set_style_bg_grad_color(scr, C_BG_DARK, 0);
     lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, 0);
     lv_obj_set_scrollbar_mode(scr, LV_SCROLLBAR_MODE_OFF);
-    // Remove padding
+    // Remove padding & theme artifacts (white border)
     lv_obj_set_style_pad_all(scr, 0, 0);
+    lv_obj_set_style_border_width(scr, 0, 0);
+    lv_obj_set_style_outline_width(scr, 0, 0);
+    lv_obj_clear_flag(scr, LV_OBJ_FLAG_SCROLLABLE);
     return scr;
 }
 
@@ -180,20 +243,28 @@ static lv_obj_t* _mkBtn(lv_obj_t* parent, const char* text,
                           int16_t x, int16_t y, int16_t w, int16_t h,
                           lv_color_t bg, lv_event_cb_t cb, void* ud = nullptr) {
     lv_obj_t* btn = lv_button_create(parent);
+    lv_obj_remove_style_all(btn);   // Strip theme defaults to prevent partial-highlight glitches
     lv_obj_set_size(btn, w, h);
     lv_obj_set_pos(btn, x, y);
+
+    // Default state
     lv_obj_set_style_bg_color(btn, bg, 0);
     lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, 0);
     lv_obj_set_style_radius(btn, 10, 0);
-    lv_obj_set_style_shadow_width(btn, 10, 0);
-    lv_obj_set_style_shadow_opa(btn, LV_OPA_30, 0);
+    lv_obj_set_style_shadow_width(btn, 8, 0);
+    lv_obj_set_style_shadow_opa(btn, LV_OPA_20, 0);
     lv_obj_set_style_shadow_spread(btn, 1, 0);
-    lv_obj_set_style_border_width(btn, 1, 0);
+    lv_obj_set_style_border_width(btn, 2, 0);
     lv_obj_set_style_border_color(btn, lv_color_darken(bg, 40), 0);
-    // Focus ring
-    lv_obj_set_style_outline_width(btn, 2, LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_color(btn, C_ACCENT, LV_STATE_FOCUSED);
-    lv_obj_set_style_outline_opa(btn, LV_OPA_COVER, LV_STATE_FOCUSED);
+    lv_obj_set_style_border_opa(btn, LV_OPA_COVER, 0);
+
+    // Pressed state — border-based (draws inside bounds, no clipping)
+    lv_obj_set_style_bg_color(btn, lv_color_lighten(bg, 40), LV_STATE_PRESSED);
+    lv_obj_set_style_border_color(btn, C_ACCENT, LV_STATE_PRESSED);
+    lv_obj_set_style_shadow_width(btn, 0, LV_STATE_PRESSED);
+
+    // Focused state (keypad navigation) — border-based, no outline clipping
+    lv_obj_set_style_border_color(btn, C_ACCENT, LV_STATE_FOCUSED);
 
     lv_obj_t* lbl = lv_label_create(btn);
     lv_label_set_text(lbl, text);
@@ -1083,7 +1154,7 @@ static void _buildQuickMenu() {
 // =============================================================================
 static NfcPlayerCard _pCard;
 
-static void _evProgPlayer(lv_event_t* e)   { _progMode = 1; _progStep = 0; memset(&_pCard, 0, sizeof(_pCard)); G.screenDirty = true; }
+static void _evProgPlayer(lv_event_t* e)   { _progMode = 1; _progStep = 0; memset(&_pCard, 0, sizeof(_pCard)); _progTokenIdx = 0; G.screenDirty = true; }
 static void _evProgProperty(lv_event_t* e) { _progMode = 2; _progStep = 0; _propIdx = 1; G.screenDirty = true; }
 static void _evProgEvent(lv_event_t* e)    { _progMode = 3; _progStep = 0; G.screenDirty = true; }
 static void _evProgBack(lv_event_t* e)     { _progMode = 0; G.screenDirty = true; }
@@ -1091,6 +1162,17 @@ static void _evProgBack(lv_event_t* e)     { _progMode = 0; G.screenDirty = true
 static void _evProgPidDec(lv_event_t* e) { if (_pCard.playerId > 0) _pCard.playerId--; G.screenDirty = true; }
 static void _evProgPidInc(lv_event_t* e) { if (_pCard.playerId < 7) _pCard.playerId++; G.screenDirty = true; }
 static void _evProgPidNext(lv_event_t* e) { _progStep = 1; G.screenDirty = true; }
+
+static void _evProgTokenSelect(lv_event_t* e) {
+    _progTokenIdx = (uint8_t)(uintptr_t)lv_event_get_user_data(e);
+    G.screenDirty = true;
+}
+static void _evProgTokenWrite(lv_event_t* e) {
+    _pCard.colour = PLAYER_COLOURS[_pCard.playerId];
+    strncpy(_pCard.name, TOKEN_NAMES[_progTokenIdx], MAX_NAME_LEN);
+    _progStep = 2;
+    G.screenDirty = true;
+}
 
 static void _evProgPropPrev(lv_event_t* e) {
     do { _propIdx = (_propIdx + BOARD_SIZE - 1) % BOARD_SIZE; }
@@ -1123,15 +1205,16 @@ static void _buildProgramming() {
             _mkBtn(scr, "+", 220, 100, 40, 30, C_BTN_BG, _evProgPidInc);
             _mkBtn(scr, "NEXT", 80, 150, 160, 35, C_BTN_ACTIVE, _evProgPidNext);
         } else if (_progStep == 1) {
-            _mkLabel(scr, "Enter name then scan card", LV_ALIGN_TOP_MID, 0, 50, FONT_MD, C_TEXT);
-            _pCard.colour = PLAYER_COLOURS[_pCard.playerId];
-            memset(_pCard.name, 0, sizeof(_pCard.name));
-            // Launch keyboard (blocking)
-            _showScreen(scr);
-            ui_keyboard(_pCard.name, MAX_NAME_LEN, "Player Name");
-            _progStep = 2;
-            G.screenDirty = true;
-            return;
+            _mkLabel(scr, "Select Token:", LV_ALIGN_TOP_MID, 0, 38, FONT_MD, C_TEXT);
+            for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
+                int16_t bx = 10 + (i % 4) * 77;
+                int16_t by = 60 + (i / 4) * 46;
+                lv_color_t bg = (i == _progTokenIdx) ? C_BTN_ACTIVE : C_BTN_BG;
+                _mkBtn(scr, TOKEN_NAMES[i], bx, by, 72, 40, bg,
+                       _evProgTokenSelect, (void*)(uintptr_t)i);
+            }
+            _mkBtn(scr, "WRITE CARD", 80, 158, 160, 38, C_BTN_ACTIVE, _evProgTokenWrite);
+            _mkBtn(scr, "BACK", 10, 210, 70, 25, C_DANGER, _evProgBack);
         } else if (_progStep == 2) {
             _mkLabel(scr, "SCAN CARD NOW", LV_ALIGN_TOP_MID, 0, 60, FONT_MD, C_ACCENT);
             char info[40]; snprintf(info, sizeof(info), "ID:%d Name:%s", _pCard.playerId, _pCard.name);
