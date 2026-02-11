@@ -72,6 +72,7 @@ static uint8_t   _progStep     = 0;
 static int8_t    _settSel      = 0;
 static uint8_t   _propIdx      = 1;  // For programming mode property selection
 static uint8_t   _progTokenIdx = 0;  // Token shape selection for programming
+static uint8_t   _usedTokens   = 0;  // Bitmask of already-written tokens
 
 // Timers
 static lv_timer_t* _activeTimer  = nullptr;
@@ -466,7 +467,30 @@ static lv_obj_t* _setupScr = nullptr;
 
 static void _rebuildSetupPlayers();
 
+// Check if a token name is already used by a registered player
+static bool _isTokenTaken(const char* name) {
+    for (uint8_t i = 0; i < _setupRegistered; i++) {
+        if (strncmp(G.players[i].name, name, MAX_NAME_LEN) == 0) return true;
+    }
+    return false;
+}
+
+// Find the next available token index (not already used by a registered player)
+static int8_t _nextFreeToken() {
+    for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
+        if (!_isTokenTaken(TOKEN_NAMES[i])) return i;
+    }
+    return -1;
+}
+
 static void _evSkipPlayer(lv_event_t* e) {
+    // Auto-assign next available token
+    int8_t tok = _nextFreeToken();
+    if (tok >= 0) {
+        Player& p = G.players[_setupRegistered];
+        strncpy(p.name, TOKEN_NAMES[tok], MAX_NAME_LEN);
+        p.colour = PLAYER_COLOURS[tok];
+    }
     _setupRegistered++;
     hw_playCashIn();
     _rebuildSetupPlayers();
@@ -545,13 +569,27 @@ static void _buildSetupPlayers() {
             if (_setupRegistered >= G.numPlayers) { return; }
             uint8_t uid[7]; uint8_t uidLen;
             if (nfc_pollCard(uid, &uidLen, 80)) {
-                Player& p = G.players[_setupRegistered];
-                memcpy(p.uid, uid, uidLen);
-                p.uidLen = uidLen;
                 NfcPlayerCard card;
                 if (nfc_readPlayerCard(uid, uidLen, card)) {
+                    // Reject if this token name is already registered
+                    if (_isTokenTaken(card.name)) {
+                        hw_playError();
+                        return;   // ignore, keep polling
+                    }
+                    Player& p = G.players[_setupRegistered];
+                    memcpy(p.uid, uid, uidLen);
+                    p.uidLen = uidLen;
                     strncpy(p.name, card.name, MAX_NAME_LEN);
                     p.colour = card.colour;
+                } else {
+                    // Card couldn't be read — auto-assign next free token
+                    int8_t tok = _nextFreeToken();
+                    if (tok < 0) { hw_playError(); return; }
+                    Player& p = G.players[_setupRegistered];
+                    memcpy(p.uid, uid, uidLen);
+                    p.uidLen = uidLen;
+                    strncpy(p.name, TOKEN_NAMES[tok], MAX_NAME_LEN);
+                    p.colour = PLAYER_COLOURS[tok];
                 }
                 hw_playSuccess();
                 _setupRegistered++;
@@ -1154,23 +1192,23 @@ static void _buildQuickMenu() {
 // =============================================================================
 static NfcPlayerCard _pCard;
 
-static void _evProgPlayer(lv_event_t* e)   { _progMode = 1; _progStep = 0; memset(&_pCard, 0, sizeof(_pCard)); _progTokenIdx = 0; G.screenDirty = true; }
+static void _evProgPlayer(lv_event_t* e)   { _progMode = 1; _progStep = 0; memset(&_pCard, 0, sizeof(_pCard)); _progTokenIdx = 0xFF; G.screenDirty = true; }
 static void _evProgProperty(lv_event_t* e) { _progMode = 2; _progStep = 0; _propIdx = 1; G.screenDirty = true; }
 static void _evProgEvent(lv_event_t* e)    { _progMode = 3; _progStep = 0; G.screenDirty = true; }
 static void _evProgBack(lv_event_t* e)     { _progMode = 0; G.screenDirty = true; }
 
-static void _evProgPidDec(lv_event_t* e) { if (_pCard.playerId > 0) _pCard.playerId--; G.screenDirty = true; }
-static void _evProgPidInc(lv_event_t* e) { if (_pCard.playerId < 7) _pCard.playerId++; G.screenDirty = true; }
-static void _evProgPidNext(lv_event_t* e) { _progStep = 1; G.screenDirty = true; }
-
 static void _evProgTokenSelect(lv_event_t* e) {
-    _progTokenIdx = (uint8_t)(uintptr_t)lv_event_get_user_data(e);
+    uint8_t idx = (uint8_t)(uintptr_t)lv_event_get_user_data(e);
+    if (_usedTokens & (1 << idx)) { hw_playError(); return; } // already used
+    _progTokenIdx = idx;
     G.screenDirty = true;
 }
 static void _evProgTokenWrite(lv_event_t* e) {
-    _pCard.colour = PLAYER_COLOURS[_pCard.playerId];
+    if (_progTokenIdx >= MAX_PLAYERS) { hw_playError(); return; } // none selected
+    _pCard.playerId = _progTokenIdx;
+    _pCard.colour = PLAYER_COLOURS[_progTokenIdx];
     strncpy(_pCard.name, TOKEN_NAMES[_progTokenIdx], MAX_NAME_LEN);
-    _progStep = 2;
+    _progStep = 1;  // go to scan step
     G.screenDirty = true;
 }
 
@@ -1198,27 +1236,43 @@ static void _buildProgramming() {
     }
     else if (_progMode == 1) {
         if (_progStep == 0) {
-            _mkLabel(scr, "Player ID (0-7):", LV_ALIGN_TOP_MID, 0, 45, FONT_MD, C_TEXT);
-            char b[4]; snprintf(b, 4, "%d", _pCard.playerId);
-            _mkLabel(scr, b, LV_ALIGN_TOP_MID, 0, 75, FONT_XL, C_ACCENT);
-            _mkBtn(scr, "-", 60, 100, 40, 30, C_BTN_BG, _evProgPidDec);
-            _mkBtn(scr, "+", 220, 100, 40, 30, C_BTN_BG, _evProgPidInc);
-            _mkBtn(scr, "NEXT", 80, 150, 160, 35, C_BTN_ACTIVE, _evProgPidNext);
-        } else if (_progStep == 1) {
+            // Token selection — directly, no ID step
             _mkLabel(scr, "Select Token:", LV_ALIGN_TOP_MID, 0, 38, FONT_MD, C_TEXT);
             for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
                 int16_t bx = 10 + (i % 4) * 77;
                 int16_t by = 60 + (i / 4) * 46;
-                lv_color_t bg = (i == _progTokenIdx) ? C_BTN_ACTIVE : C_BTN_BG;
-                _mkBtn(scr, TOKEN_NAMES[i], bx, by, 72, 40, bg,
+                bool used = (_usedTokens & (1 << i));
+                lv_color_t bg;
+                if (used)                    bg = lv_color_hex(0x1E1E1E); // greyed out
+                else if (i == _progTokenIdx) bg = C_BTN_ACTIVE;           // selected
+                else                         bg = C_BTN_BG;              // available
+                lv_obj_t* tb = _mkBtn(scr, TOKEN_NAMES[i], bx, by, 72, 40, bg,
                        _evProgTokenSelect, (void*)(uintptr_t)i);
+                if (used) {
+                    // Dim the label text for used tokens
+                    lv_obj_t* lbl = lv_obj_get_child(tb, 0);
+                    if (lbl) lv_obj_set_style_text_opa(lbl, LV_OPA_30, 0);
+                }
             }
-            _mkBtn(scr, "WRITE CARD", 80, 158, 160, 38, C_BTN_ACTIVE, _evProgTokenWrite);
+            bool canWrite = (_progTokenIdx < MAX_PLAYERS) && !(_usedTokens & (1 << _progTokenIdx));
+            _mkBtn(scr, "WRITE CARD", 80, 158, 160, 38,
+                   canWrite ? C_BTN_ACTIVE : lv_color_hex(0x1E1E1E), _evProgTokenWrite);
             _mkBtn(scr, "BACK", 10, 210, 70, 25, C_DANGER, _evProgBack);
-        } else if (_progStep == 2) {
-            _mkLabel(scr, "SCAN CARD NOW", LV_ALIGN_TOP_MID, 0, 60, FONT_MD, C_ACCENT);
-            char info[40]; snprintf(info, sizeof(info), "ID:%d Name:%s", _pCard.playerId, _pCard.name);
-            _mkLabel(scr, info, LV_ALIGN_TOP_MID, 0, 90, FONT_SM, C_TEXT);
+        } else if (_progStep == 1) {
+            // Scan card step
+            _mkLabel(scr, "SCAN CARD NOW", LV_ALIGN_TOP_MID, 0, 55, FONT_MD, C_ACCENT);
+            char info[40]; snprintf(info, sizeof(info), "Token: %s", _pCard.name);
+            _mkLabel(scr, info, LV_ALIGN_TOP_MID, 0, 85, FONT_MD, C_TEXT);
+
+            // Show the token colour
+            lv_obj_t* dot = lv_obj_create(scr);
+            lv_obj_remove_style_all(dot);
+            lv_obj_set_size(dot, 20, 20);
+            lv_obj_align(dot, LV_ALIGN_TOP_MID, 0, 110);
+            lv_obj_set_style_bg_color(dot, _c(_pCard.colour), 0);
+            lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+            lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+
             _mkBtn(scr, "CANCEL", 10, 210, 70, 25, C_DANGER, _evProgBack);
 
             // NFC poll timer
@@ -1227,8 +1281,12 @@ static void _buildProgramming() {
                 uint8_t uid[7]; uint8_t uidLen;
                 if (nfc_pollCard(uid, &uidLen, 100)) {
                     _pCard.type = NFC_TYPE_PLAYER;
-                    if (nfc_writePlayerCard(uid, uidLen, _pCard)) hw_playSuccess();
-                    else hw_playError();
+                    if (nfc_writePlayerCard(uid, uidLen, _pCard)) {
+                        hw_playSuccess();
+                        _usedTokens |= (1 << _progTokenIdx); // mark as used
+                    } else {
+                        hw_playError();
+                    }
                     _progMode = 0;
                     G.phase = PHASE_PROGRAMMING;
                     G.screenDirty = true;

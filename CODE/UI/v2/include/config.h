@@ -33,9 +33,9 @@
 #define PIN_NFC_RST      -1
 
 // Physical buttons (active LOW, use INPUT_PULLUP)
-#define PIN_BTN_LEFT     5
-#define PIN_BTN_CENTER   6
-#define PIN_BTN_RIGHT    7
+#define PIN_BTN_LEFT     3
+#define PIN_BTN_CENTER   10
+#define PIN_BTN_RIGHT    46
 
 // Speaker / buzzer
 #define PIN_SPEAKER      4
