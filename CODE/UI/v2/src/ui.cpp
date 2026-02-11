@@ -475,26 +475,6 @@ static bool _isTokenTaken(const char* name) {
     return false;
 }
 
-// Find the next available token index (not already used by a registered player)
-static int8_t _nextFreeToken() {
-    for (uint8_t i = 0; i < MAX_PLAYERS; i++) {
-        if (!_isTokenTaken(TOKEN_NAMES[i])) return i;
-    }
-    return -1;
-}
-
-static void _evSkipPlayer(lv_event_t* e) {
-    // Auto-assign next available token
-    int8_t tok = _nextFreeToken();
-    if (tok >= 0) {
-        Player& p = G.players[_setupRegistered];
-        strncpy(p.name, TOKEN_NAMES[tok], MAX_NAME_LEN);
-        p.colour = PLAYER_COLOURS[tok];
-    }
-    _setupRegistered++;
-    hw_playCashIn();
-    _rebuildSetupPlayers();
-}
 static void _evStartGame(lv_event_t* e) {
     G.phase = PHASE_TURN_START;
     game_startTurn();
@@ -553,8 +533,9 @@ static void _buildSetupPlayers() {
 
     // Instructions
     if (_setupRegistered < G.numPlayers) {
-        _mkLabel(scr, "Scan card or tap SKIP", LV_ALIGN_TOP_MID, 0, 155, FONT_SM, C_TEXT_DIM);
-        _mkBtn(scr, "SKIP", 110, 172, 100, 32, C_BTN_BG, _evSkipPlayer);
+        char hint[40];
+        snprintf(hint, sizeof(hint), "Scan player %d of %d", _setupRegistered + 1, G.numPlayers);
+        _mkLabel(scr, hint, LV_ALIGN_TOP_MID, 0, 155, FONT_SM, C_TEXT_DIM);
     } else {
         _mkBtn(scr, "START GAME", 80, 172, 160, 45, C_BTN_ACTIVE, _evStartGame);
     }
@@ -570,27 +551,19 @@ static void _buildSetupPlayers() {
             uint8_t uid[7]; uint8_t uidLen;
             if (nfc_pollCard(uid, &uidLen, 80)) {
                 NfcPlayerCard card;
-                if (nfc_readPlayerCard(uid, uidLen, card)) {
-                    // Reject if this token name is already registered
-                    if (_isTokenTaken(card.name)) {
-                        hw_playError();
-                        return;   // ignore, keep polling
-                    }
-                    Player& p = G.players[_setupRegistered];
-                    memcpy(p.uid, uid, uidLen);
-                    p.uidLen = uidLen;
-                    strncpy(p.name, card.name, MAX_NAME_LEN);
-                    p.colour = card.colour;
-                } else {
-                    // Card couldn't be read — auto-assign next free token
-                    int8_t tok = _nextFreeToken();
-                    if (tok < 0) { hw_playError(); return; }
-                    Player& p = G.players[_setupRegistered];
-                    memcpy(p.uid, uid, uidLen);
-                    p.uidLen = uidLen;
-                    strncpy(p.name, TOKEN_NAMES[tok], MAX_NAME_LEN);
-                    p.colour = PLAYER_COLOURS[tok];
+                if (!nfc_readPlayerCard(uid, uidLen, card)) {
+                    hw_playError();   // unreadable / not a player card
+                    return;
                 }
+                if (_isTokenTaken(card.name)) {
+                    hw_playError();   // duplicate token
+                    return;
+                }
+                Player& p = G.players[_setupRegistered];
+                memcpy(p.uid, uid, uidLen);
+                p.uidLen = uidLen;
+                strncpy(p.name, card.name, MAX_NAME_LEN);
+                p.colour = card.colour;
                 hw_playSuccess();
                 _setupRegistered++;
                 G.phase = PHASE_SETUP_PLAYERS;
