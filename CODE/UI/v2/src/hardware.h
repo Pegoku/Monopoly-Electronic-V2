@@ -5,6 +5,22 @@
 #include "config.h"
 
 // =============================================================================
+// POWER / BATTERY (BQ25895 charger)
+// =============================================================================
+struct BatteryInfo {
+    bool     present      = false;   // true if BQ25895 responded
+    bool     powerGood    = false;   // VIN present (PG_STAT)
+    bool     charging     = false;   // CHG_STAT not "not charging"
+    uint8_t  percent      = 0;       // 0-100, derived from VBAT reading
+    float    voltage      = 0.0f;    // battery voltage (V)
+    uint32_t lastUpdateMs = 0;       // millis() timestamp of last poll
+};
+
+void        hw_initPower();          // Configure charger (1A) + start ADC
+void        hw_updatePower();        // Poll VBAT/CHG status (lightweight)
+BatteryInfo hw_getBatteryInfo();
+
+// =============================================================================
 // DISPLAY (TFT_eSPI used as LVGL backend)
 // =============================================================================
 extern TFT_eSPI tft;

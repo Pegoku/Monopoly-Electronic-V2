@@ -34,6 +34,9 @@ void setup() {
         Serial.println(F("[INIT] NFC not detected — continuing without NFC"));
     }
 
+    // Power / charger (BQ25895)
+    hw_initPower();
+
     // Load saved settings (if any)
     storage_loadSettings(G.settings);
     hw_setVolume(G.settings.volume);
@@ -53,6 +56,7 @@ void setup() {
 
 void loop() {
     hw_updateAudio();       // advance non-blocking melodies
+    hw_updatePower();       // poll charger / battery state
     ui_update();            // react to game state changes
     lv_timer_handler();     // LVGL rendering + event processing
     delay(5);               // yield

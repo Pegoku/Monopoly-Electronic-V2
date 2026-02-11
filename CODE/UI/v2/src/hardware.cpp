@@ -1,5 +1,6 @@
 #include "hardware.h"
 #include <lvgl.h>
+#include <Wire.h>
 
 // =============================================================================
 // GLOBALS
@@ -243,6 +244,101 @@ static uint32_t _lvgl_tick_cb(void) {
 
 // LVGL group for button navigation
 static lv_group_t* _defaultGroup = nullptr;
+
+// =============================================================================
+// POWER / BATTERY (BQ25895)
+// =============================================================================
+// Charger address on I2C bus
+static const uint8_t BQ_ADDR = 0x6A;   // BQ25895 default 7-bit address
+
+// Register map (subset)
+static const uint8_t REG_INPUT_CTRL   = 0x00;
+static const uint8_t REG_PSYS         = 0x01;
+static const uint8_t REG_ICHG         = 0x04;
+static const uint8_t REG_CONV         = 0x02;  // ADC/ICO/VINDPM control
+static const uint8_t REG_SYS_STATUS   = 0x0B;
+static const uint8_t REG_SYS_FAULT    = 0x0C;
+static const uint8_t REG_VBAT_ADC     = 0x0E;  // VBAT ADC result
+
+// Internal state
+static BatteryInfo _batt;
+
+// Simple I2C helpers
+static bool _bq_write(uint8_t reg, uint8_t val) {
+    Wire.beginTransmission(BQ_ADDR);
+    Wire.write(reg);
+    Wire.write(val);
+    return Wire.endTransmission() == 0;
+}
+
+static bool _bq_read(uint8_t reg, uint8_t& val) {
+    Wire.beginTransmission(BQ_ADDR);
+    Wire.write(reg);
+    if (Wire.endTransmission(false) != 0) return false;   // repeated start
+    if (Wire.requestFrom((int)BQ_ADDR, 1) != 1) return false;
+    val = Wire.read();
+    return true;
+}
+
+// Configure charger: set fast-charge current ~1A and enable ADC
+void hw_initPower() {
+    _batt = BatteryInfo{};
+
+    // Ensure Wire is running on the shared I2C bus; nfc_init() also calls Wire.begin
+    Wire.begin(PIN_NFC_SDA, PIN_NFC_SCL);
+
+    uint8_t v;
+    if (!_bq_read(REG_SYS_STATUS, v)) {
+        DBG_PRINT("BQ25895 not responding");
+        return;
+    }
+    _batt.present = true;
+
+    // Set ICHG to ~1.0A (REG04[5:0], 64mA steps, offset 512mA -> code 0x08 ≈1.0A)
+    if (_bq_read(REG_ICHG, v)) {
+        v = (v & 0xC0) | 0x08;
+        _bq_write(REG_ICHG, v);
+    }
+
+    // Enable ADC conversion (REG02[7]=1). Keep other bits intact.
+    if (_bq_read(REG_CONV, v)) {
+        v |= 0x80;
+        _bq_write(REG_CONV, v);
+    }
+
+    DBG_PRINT("BQ25895 init OK (ICHG≈1A, ADC on)");
+}
+
+// Poll charger for status + voltage
+void hw_updatePower() {
+    if (!_batt.present) return;
+    static uint32_t last = 0;
+    uint32_t now = millis();
+    if (now - last < 1200) return; // light polling (~1.2s)
+    last = now;
+
+    uint8_t st;
+    if (_bq_read(REG_SYS_STATUS, st)) {
+        uint8_t chgStat = (st >> 4) & 0x03;
+        _batt.charging  = (chgStat == 1 || chgStat == 2); // precharge or fast
+        _batt.powerGood = st & 0x04;
+    }
+
+    uint8_t vbatRaw;
+    if (_bq_read(REG_VBAT_ADC, vbatRaw)) {
+        // Datasheet: VBAT = 2.304V + raw*20mV
+        float vbat = 2.304f + (float)vbatRaw * 0.020f;
+        _batt.voltage = vbat;
+        // crude % estimation: 3.5V -> 0%, 4.2V -> 100%
+        float pct = (vbat - 3.50f) / (4.20f - 3.50f);
+        if (pct < 0) pct = 0;
+        if (pct > 1) pct = 1;
+        _batt.percent = (uint8_t)(pct * 100);
+    }
+    _batt.lastUpdateMs = now;
+}
+
+BatteryInfo hw_getBatteryInfo() { return _batt; }
 
 void hw_lvgl_init() {
     DBG_PRINT("LVGL init start");

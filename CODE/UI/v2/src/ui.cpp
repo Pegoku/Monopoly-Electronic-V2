@@ -74,6 +74,68 @@ static void _clearTimers() {
 }
 
 // =============================================================================
+// STATUS OVERLAY (battery / charging)
+// =============================================================================
+static lv_obj_t* _statusCont = nullptr;
+static lv_obj_t* _statusIcon = nullptr;
+static lv_obj_t* _statusLbl  = nullptr;
+
+static void _initStatusOverlay() {
+    lv_obj_t* layer = lv_layer_top();
+    _statusCont = lv_obj_create(layer);
+    lv_obj_remove_style_all(_statusCont);
+    lv_obj_set_size(_statusCont, 108, 26);
+    lv_obj_align(_statusCont, LV_ALIGN_TOP_RIGHT, -6, 4);
+    lv_obj_set_style_bg_color(_statusCont, lv_color_mix(C_BG, C_BTN_BG, LV_OPA_50), 0);
+    lv_obj_set_style_bg_opa(_statusCont, LV_OPA_80, 0);
+    lv_obj_set_style_radius(_statusCont, 12, 0);
+    lv_obj_set_style_border_width(_statusCont, 1, 0);
+    lv_obj_set_style_border_color(_statusCont, C_PRIMARY, 0);
+    lv_obj_set_scrollbar_mode(_statusCont, LV_SCROLLBAR_MODE_OFF);
+
+    _statusIcon = lv_label_create(_statusCont);
+    lv_label_set_text(_statusIcon, "");
+    lv_obj_set_style_text_color(_statusIcon, C_ACCENT, 0);
+    lv_obj_set_style_text_font(_statusIcon, FONT_MD, 0);
+    lv_obj_align(_statusIcon, LV_ALIGN_LEFT_MID, 6, 0);
+
+    _statusLbl = lv_label_create(_statusCont);
+    lv_label_set_text(_statusLbl, "--%");
+    lv_obj_set_style_text_color(_statusLbl, C_TEXT, 0);
+    lv_obj_set_style_text_font(_statusLbl, FONT_MD, 0);
+    lv_obj_align(_statusLbl, LV_ALIGN_RIGHT_MID, -8, 0);
+}
+
+static void _refreshStatusOverlay() {
+    if (!_statusCont) return;
+    BatteryInfo bi = hw_getBatteryInfo();
+
+    char buf[12];
+    if (!bi.present) {
+        snprintf(buf, sizeof(buf), "--%%");
+        lv_obj_set_style_text_color(_statusLbl, C_TEXT_DIM, 0);
+        lv_label_set_text(_statusIcon, "");
+    } else {
+        uint8_t pct = bi.percent;
+        snprintf(buf, sizeof(buf), "%d%%", pct);
+
+        lv_color_t col = (pct >= 60) ? C_ACCENT : (pct >= 25 ? C_WARN : C_DANGER);
+        lv_obj_set_style_text_color(_statusLbl, col, 0);
+
+        if (bi.charging) {
+            lv_label_set_text(_statusIcon, LV_SYMBOL_CHARGE);
+            lv_obj_set_style_text_color(_statusIcon, C_ACCENT, 0);
+        } else if (bi.powerGood) {
+            lv_label_set_text(_statusIcon, LV_SYMBOL_POWER);
+            lv_obj_set_style_text_color(_statusIcon, C_PRIMARY, 0);
+        } else {
+            lv_label_set_text(_statusIcon, "");
+        }
+    }
+    lv_label_set_text(_statusLbl, buf);
+}
+
+// =============================================================================
 // SCREEN MANAGEMENT
 // =============================================================================
 static void _showScreen(lv_obj_t* scr) {
@@ -85,6 +147,8 @@ static lv_obj_t* _newScreen() {
     lv_obj_t* scr = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(scr, C_BG, 0);
     lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_grad_color(scr, C_BG_DARK, 0);
+    lv_obj_set_style_bg_grad_dir(scr, LV_GRAD_DIR_VER, 0);
     lv_obj_set_scrollbar_mode(scr, LV_SCROLLBAR_MODE_OFF);
     // Remove padding
     lv_obj_set_style_pad_all(scr, 0, 0);
@@ -101,6 +165,8 @@ static lv_obj_t* _mkHeader(lv_obj_t* parent, const char* text, lv_color_t bg) {
     lv_obj_align(bar, LV_ALIGN_TOP_MID, 0, 0);
     lv_obj_set_style_bg_color(bar, bg, 0);
     lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+    lv_obj_set_style_border_width(bar, 1, 0);
+    lv_obj_set_style_border_color(bar, lv_color_darken(bg, 32), 0);
 
     lv_obj_t* lbl = lv_label_create(bar);
     lv_label_set_text(lbl, text);
@@ -118,7 +184,12 @@ static lv_obj_t* _mkBtn(lv_obj_t* parent, const char* text,
     lv_obj_set_pos(btn, x, y);
     lv_obj_set_style_bg_color(btn, bg, 0);
     lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, 0);
-    lv_obj_set_style_radius(btn, 6, 0);
+    lv_obj_set_style_radius(btn, 10, 0);
+    lv_obj_set_style_shadow_width(btn, 10, 0);
+    lv_obj_set_style_shadow_opa(btn, LV_OPA_30, 0);
+    lv_obj_set_style_shadow_spread(btn, 1, 0);
+    lv_obj_set_style_border_width(btn, 1, 0);
+    lv_obj_set_style_border_color(btn, lv_color_darken(bg, 40), 0);
     // Focus ring
     lv_obj_set_style_outline_width(btn, 2, LV_STATE_FOCUSED);
     lv_obj_set_style_outline_color(btn, C_ACCENT, LV_STATE_FOCUSED);
@@ -1329,6 +1400,7 @@ bool ui_keyboard(char* buf, uint8_t maxLen, const char* prompt) {
 void ui_init() {
     _initColors();
     _prevPhase = (GamePhase)0xFF;
+    _initStatusOverlay();
     DBG_PRINT("UI init done (LVGL)");
 }
 
@@ -1367,4 +1439,5 @@ void ui_update() {
             default: break;
         }
     }
+    _refreshStatusOverlay();
 }
