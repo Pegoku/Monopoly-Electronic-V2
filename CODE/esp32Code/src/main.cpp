@@ -51,6 +51,7 @@ uint32_t programMessageUntilMs = 0;
 uint32_t comboHoldStartMs = 0;
 bool comboLatch = false;
 bool uiDirty = true;
+int8_t lastWaitAnimPhase = -1;
 
 void logLine(const char *text) {
   Serial.println(text);
@@ -151,6 +152,10 @@ const char *programCategoryName(ProgramCategory cat) {
   return "?";
 }
 
+void logProgramSelection() {
+  logf("[PROG] category=%s number=%u", programCategoryName(programCategory), programIndex + 1);
+}
+
 uint8_t maxIndexForCategory(ProgramCategory cat) {
   if (cat == ProgramCategory::Player) return 7;
   if (cat == ProgramCategory::Property) return 27;
@@ -167,18 +172,23 @@ void setProgramMessage(const char *msg, uint32_t holdMs = 1000) {
 void updateProgramDetail() {
   if (programCategory == ProgramCategory::Player) {
     snprintf(programDetail, sizeof(programDetail), "ID %u BAL %u", programIndex + 1, STARTING_MONEY);
+    logProgramSelection();
+    uiDirty = true;
     return;
   }
   if (programCategory == ProgramCategory::Property) {
     const uint8_t id = programIndex + 1;
     const uint16_t price = 80 + static_cast<uint16_t>(id * 12.5f + 0.5f);
     snprintf(programDetail, sizeof(programDetail), "#%u COST %u", id, price);
+    logProgramSelection();
+    uiDirty = true;
     return;
   }
 
   static const int16_t values[] = {200, -150, 0, 1, 100, -200};
   static const char *types[] = {"MONEY+", "MONEY-", "JAIL", "RENT+", "MONEY+", "MONEY-"};
   snprintf(programDetail, sizeof(programDetail), "#%u %s %d", programIndex + 1, types[programIndex], values[programIndex]);
+  logProgramSelection();
   uiDirty = true;
 }
 
@@ -439,10 +449,20 @@ void refreshUi(bool force = false) {
     uiDirty = true;
   }
 
+  bool animDirty = false;
   const bool waitAnim = (!programmingMode && game.state() == UiState::WAIT_CARD);
-  const bool animTick = waitAnim && (now - lastRenderMs >= 120);
+  if (waitAnim) {
+    const int8_t phase = static_cast<int8_t>((now / 120) % 2);
+    if (phase != lastWaitAnimPhase) {
+      lastWaitAnimPhase = phase;
+      animDirty = true;
+    }
+  } else {
+    lastWaitAnimPhase = -1;
+  }
+
   const bool gameDirty = (!programmingMode && game.isDirty());
-  const bool needsRender = force || uiDirty || gameDirty || animTick;
+  const bool needsRender = force || uiDirty || gameDirty || animDirty;
 
   if (!needsRender) {
     return;
