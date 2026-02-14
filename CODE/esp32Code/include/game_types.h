@@ -64,5 +64,5 @@ struct CardTap {
   uint8_t uidLen = 0;
 };
 
-constexpr uint8_t GAME_MAX_PLAYERS = 8;
+constexpr uint8_t GAME_MAX_PLAYERS = 4;
 constexpr uint8_t PROPERTY_COUNT = 28;

@@ -52,6 +52,7 @@ class GameLogic {
   uint8_t firstOwnedProperty(uint8_t playerId);
   void applyEventToPlayer(const EventCardData &event, uint8_t playerId);
   void startAuction(uint8_t propertyId);
+  void markPropertyDirty(uint8_t propertyId);
 
   UiState state_ = UiState::HOME;
   ActionContext ctx_{};
@@ -60,4 +61,5 @@ class GameLogic {
   bool dirty_ = true;
   uint32_t stateSinceMs_ = 0;
   uint32_t lastAuctionTickMs_ = 0;
+  bool propertyDirty_[PROPERTY_COUNT]{};
 };

@@ -40,7 +40,15 @@ void GameLogic::begin() {
     properties_[i].baseRent = price / 4;
     if (properties_[i].baseRent < 20) properties_[i].baseRent = 20;
   }
+  for (uint8_t i = 0; i < PROPERTY_COUNT; i++) {
+    propertyDirty_[i] = false;
+  }
   setState(UiState::HOME);
+}
+
+void GameLogic::markPropertyDirty(uint8_t propertyId) {
+  if (propertyId < 1 || propertyId > PROPERTY_COUNT) return;
+  propertyDirty_[propertyId - 1] = true;
 }
 
 void GameLogic::setState(UiState next) {
@@ -128,6 +136,7 @@ void GameLogic::settleDebtWithProperty(uint8_t propertyId) {
 
   prop->ownerId = ctx_.creditorId;
   if (ctx_.creditorId == 0) prop->level = 1;
+  markPropertyDirty(prop->id);
 
   ctx_.debtAmount -= prop->basePrice;
   if (ctx_.debtAmount <= 0) {
@@ -190,6 +199,7 @@ void GameLogic::applyEventToPlayer(const EventCardData &event, uint8_t playerId)
     PropertyState *prop = propertyById(owned);
     if (prop) {
       if (prop->level < kMaxLevel) prop->level++;
+      markPropertyDirty(prop->id);
     }
     ctx_ = {};
     setFlash(ctx_, "RENT +1");
@@ -340,6 +350,7 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       player->balance -= price;
       prop->ownerId = player->id;
       prop->level = 1;
+      markPropertyDirty(prop->id);
       card.balance = player->balance;
       cards.writePlayer(tap, card);
       ctx_ = {};
@@ -361,6 +372,7 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
 
     if (player->id == prop->ownerId) {
       if (prop->level < kMaxLevel) prop->level++;
+      markPropertyDirty(prop->id);
       ctx_ = {};
       setFlash(ctx_, "LEVEL UP");
       setState(UiState::HOME);
@@ -375,6 +387,7 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       player->balance -= rent;
       owner->balance += rent;
       if (prop->level < kMaxLevel) prop->level++;
+      markPropertyDirty(prop->id);
 
       card.balance = player->balance;
       cards.writePlayer(tap, card);
@@ -416,6 +429,7 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       player->balance -= bid;
       prop->ownerId = player->id;
       prop->level = 1;
+      markPropertyDirty(prop->id);
       card.balance = player->balance;
       cards.writePlayer(tap, card);
       ctx_ = {};
@@ -447,16 +461,24 @@ void GameLogic::onPropertyCard(const CardTap &tap, CardManager &cards) {
   PropertyState *prop = propertyById(card.propertyId);
   if (!prop) return;
 
-  if (card.basePrice == 0) {
+  if (propertyDirty_[prop->id - 1]) {
+    card.ownerId = prop->ownerId;
+    card.level = prop->level;
     card.basePrice = prop->basePrice;
     cards.writeProperty(tap, card);
-  }
+    propertyDirty_[prop->id - 1] = false;
+  } else {
+    if (card.basePrice == 0) {
+      card.basePrice = prop->basePrice;
+      cards.writeProperty(tap, card);
+    }
 
-  prop->ownerId = card.ownerId;
-  prop->level = card.level < 1 ? 1 : card.level;
-  prop->basePrice = card.basePrice;
-  prop->baseRent = card.basePrice / 4;
-  if (prop->baseRent < 20) prop->baseRent = 20;
+    prop->ownerId = card.ownerId;
+    prop->level = card.level < 1 ? 1 : card.level;
+    prop->basePrice = card.basePrice;
+    prop->baseRent = card.basePrice / 4;
+    if (prop->baseRent < 20) prop->baseRent = 20;
+  }
 
   if (state_ == UiState::DEBT) {
     settleDebtWithProperty(prop->id);

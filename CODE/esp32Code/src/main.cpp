@@ -157,7 +157,7 @@ void logProgramSelection() {
 }
 
 uint8_t maxIndexForCategory(ProgramCategory cat) {
-  if (cat == ProgramCategory::Player) return 7;
+  if (cat == ProgramCategory::Player) return GAME_MAX_PLAYERS - 1;
   if (cat == ProgramCategory::Property) return 27;
   return 5;
 }
@@ -247,23 +247,25 @@ void handleButtons() {
     return;
   }
 
+  // Physical mapping:
+  // BTN1 = X (cancel/back), BTN2 = M (mode/special), BTN3 = CHECK (confirm)
   if (b1 == ButtonPress::Short) {
-    logLine("[BTN] BTN1 pressed");
-    game.onBtn1();
-    sound.beepTick();
-    logStateTransition("BTN1");
-  }
-  if (b2 == ButtonPress::Short) {
-    logLine("[BTN] BTN2 pressed");
+    logLine("[BTN] X pressed");
     game.onBtn2();
     sound.beepTick();
-    logStateTransition("BTN2");
+    logStateTransition("X");
   }
-  if (b3 == ButtonPress::Short) {
-    logLine("[BTN] BTN3 pressed");
+  if (b2 == ButtonPress::Short) {
+    logLine("[BTN] M pressed");
     game.onBtn3();
     sound.beepTick();
-    logStateTransition("BTN3");
+    logStateTransition("M");
+  }
+  if (b3 == ButtonPress::Short) {
+    logLine("[BTN] CHECK pressed");
+    game.onBtn1();
+    sound.beepTick();
+    logStateTransition("CHECK");
   }
 }
 
