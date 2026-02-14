@@ -50,6 +50,7 @@ char programMessage[40] = {0};
 uint32_t programMessageUntilMs = 0;
 uint32_t comboHoldStartMs = 0;
 bool comboLatch = false;
+bool uiDirty = true;
 
 void logLine(const char *text) {
   Serial.println(text);
@@ -160,6 +161,7 @@ void setProgramMessage(const char *msg, uint32_t holdMs = 1000) {
   strncpy(programMessage, msg, sizeof(programMessage) - 1);
   programMessage[sizeof(programMessage) - 1] = '\0';
   programMessageUntilMs = millis() + holdMs;
+  uiDirty = true;
 }
 
 void updateProgramDetail() {
@@ -177,6 +179,7 @@ void updateProgramDetail() {
   static const int16_t values[] = {200, -150, 0, 1, 100, -200};
   static const char *types[] = {"MONEY+", "MONEY-", "JAIL", "RENT+", "MONEY+", "MONEY-"};
   snprintf(programDetail, sizeof(programDetail), "#%u %s %d", programIndex + 1, types[programIndex], values[programIndex]);
+  uiDirty = true;
 }
 
 void switchCategory(int dir) {
@@ -229,6 +232,7 @@ void handleButtons() {
       setProgramMessage("TAP CARD", 2000);
       logLine("[PROG] arm write, waiting for card");
       sound.beepTick();
+      uiDirty = true;
     }
     return;
   }
@@ -288,6 +292,7 @@ void handleProgramCombo() {
     logLine("[PROG] disabled");
   }
   sound.beepOk();
+  uiDirty = true;
 }
 
 void handleCardTap() {
@@ -431,11 +436,15 @@ void refreshUi(bool force = false) {
   if (programMessageUntilMs > 0 && now >= programMessageUntilMs) {
     programMessage[0] = '\0';
     programMessageUntilMs = 0;
+    uiDirty = true;
   }
 
-  const bool animating = programmingMode || game.state() == UiState::WAIT_CARD;
-  const uint32_t minFrameMs = animating ? 120 : HOME_REFRESH_MS;
-  if (!force && !game.isDirty() && !programmingMode && (now - lastRenderMs) < minFrameMs) {
+  const bool waitAnim = (!programmingMode && game.state() == UiState::WAIT_CARD);
+  const bool animTick = waitAnim && (now - lastRenderMs >= 120);
+  const bool gameDirty = (!programmingMode && game.isDirty());
+  const bool needsRender = force || uiDirty || gameDirty || animTick;
+
+  if (!needsRender) {
     return;
   }
 
@@ -445,6 +454,8 @@ void refreshUi(bool force = false) {
     ui.render(game, battery.readPercent());
     game.clearDirty();
   }
+
+  uiDirty = false;
   lastRenderMs = now;
 }
 }  // namespace
