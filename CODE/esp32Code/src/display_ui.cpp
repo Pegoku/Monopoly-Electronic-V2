@@ -3,10 +3,26 @@
 #include <SPI.h>
 
 namespace {
-constexpr uint16_t BG = ST77XX_WHITE;
-constexpr uint16_t FG = ST77XX_BLACK;
-constexpr uint16_t ACCENT = ST77XX_WHITE;
-constexpr uint16_t SOFT = 0xBDF7;
+constexpr uint16_t BG = 0x08A3;        // deep navy
+constexpr uint16_t FG = 0xFFFF;        // white
+constexpr uint16_t ACCENT = 0x12CF;    // blue panel
+constexpr uint16_t SOFT = 0x1B6D;      // darker blue
+constexpr uint16_t MONEY = 0x07E0;     // green
+constexpr uint16_t WARN = 0xFD20;      // orange
+constexpr uint16_t BAD = 0xF800;       // red
+
+uint16_t playerColor(uint8_t id) {
+  switch ((id - 1) % 4) {
+    case 0:
+      return 0xF800;  // red
+    case 1:
+      return 0x07FF;  // cyan
+    case 2:
+      return 0xFFE0;  // yellow
+    default:
+      return 0xFB92;  // pink
+  }
+}
 
 const char *stateName(UiState state) {
   switch (state) {
@@ -42,37 +58,37 @@ const char *iconByPlayerId(uint8_t id) {
   return icons[id - 1];
 }
 
-void drawTokenGlyph(Adafruit_ST7789 &tft, int16_t x, int16_t y, uint8_t playerId) {
+void drawTokenGlyph(Adafruit_ST7789 &tft, int16_t x, int16_t y, uint8_t playerId, uint16_t color) {
   const uint8_t kind = (playerId - 1) % 4;
   if (kind == 0) {
     // car
-    tft.drawRect(x + 1, y + 3, 10, 5, FG);
-    tft.drawFastHLine(x + 3, y + 2, 6, FG);
-    tft.fillCircle(x + 3, y + 9, 1, FG);
-    tft.fillCircle(x + 9, y + 9, 1, FG);
+    tft.drawRect(x + 1, y + 3, 10, 5, color);
+    tft.drawFastHLine(x + 3, y + 2, 6, color);
+    tft.fillCircle(x + 3, y + 9, 1, color);
+    tft.fillCircle(x + 9, y + 9, 1, color);
     return;
   }
   if (kind == 1) {
     // boat
-    tft.drawFastHLine(x + 1, y + 7, 10, FG);
-    tft.drawLine(x + 1, y + 7, x + 4, y + 10, FG);
-    tft.drawLine(x + 11, y + 7, x + 8, y + 10, FG);
-    tft.drawFastVLine(x + 6, y + 1, 6, FG);
-    tft.drawLine(x + 6, y + 1, x + 10, y + 4, FG);
+    tft.drawFastHLine(x + 1, y + 7, 10, color);
+    tft.drawLine(x + 1, y + 7, x + 4, y + 10, color);
+    tft.drawLine(x + 11, y + 7, x + 8, y + 10, color);
+    tft.drawFastVLine(x + 6, y + 1, 6, color);
+    tft.drawLine(x + 6, y + 1, x + 10, y + 4, color);
     return;
   }
   if (kind == 2) {
     // plane
-    tft.drawFastHLine(x + 1, y + 5, 10, FG);
-    tft.drawLine(x + 5, y + 1, x + 7, y + 5, FG);
-    tft.drawLine(x + 5, y + 9, x + 7, y + 5, FG);
-    tft.drawPixel(x + 10, y + 4, FG);
+    tft.drawFastHLine(x + 1, y + 5, 10, color);
+    tft.drawLine(x + 5, y + 1, x + 7, y + 5, color);
+    tft.drawLine(x + 5, y + 9, x + 7, y + 5, color);
+    tft.drawPixel(x + 10, y + 4, color);
     return;
   }
   // hat
-  tft.drawFastHLine(x + 1, y + 9, 10, FG);
-  tft.drawFastHLine(x + 3, y + 7, 6, FG);
-  tft.drawFastHLine(x + 4, y + 5, 4, FG);
+  tft.drawFastHLine(x + 1, y + 9, 10, color);
+  tft.drawFastHLine(x + 3, y + 7, 6, color);
+  tft.drawFastHLine(x + 4, y + 5, 4, color);
 }
 }  // namespace
 
@@ -106,15 +122,15 @@ void DisplayUi::clearMain() {
 }
 
 void DisplayUi::drawStatusBar(UiState state, float batteryPercent) {
-  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
-  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.fillRect(0, 0, SCREEN_W, 22, ACCENT);
+  tft_.drawFastHLine(0, 22, SCREEN_W, 0x4B3B);
   tft_.setTextColor(FG);
   tft_.setTextSize(1);
   tft_.setCursor(6, 6);
   tft_.print("bank");
   tft_.setCursor(44, 6);
   tft_.print(stateName(state));
-  tft_.setCursor(278, 6);
+  tft_.setCursor(274, 6);
   tft_.print((int)batteryPercent);
   tft_.print('%');
 }
@@ -122,35 +138,43 @@ void DisplayUi::drawStatusBar(UiState state, float batteryPercent) {
 void DisplayUi::drawHome(const GameLogic &game) {
   const PlayerState *players = game.players();
 
-  tft_.setTextColor(FG);
-  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
-
+  tft_.drawRect(4, 26, SCREEN_W - 8, 188, 0x4B3B);
   tft_.setTextSize(2);
-  int y = 40;
+  int y = 34;
   bool any = false;
   for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
     if (!players[i].active || players[i].bankrupt) continue;
     any = true;
-    drawTokenGlyph(tft_, 16, y + 4, players[i].id);
-    tft_.setCursor(42, y);
+    const uint16_t c = playerColor(players[i].id);
+    tft_.drawRoundRect(10, y - 2, SCREEN_W - 20, 36, 6, c);
+    tft_.setTextColor(c);
+    drawTokenGlyph(tft_, 18, y + 8, players[i].id, c);
+    tft_.setCursor(38, y + 2);
+    tft_.print("Player ");
+    tft_.print(players[i].id);
+    tft_.setTextColor(MONEY);
+    tft_.setCursor(38, y + 18);
     tft_.print(players[i].balance);
-    y += 28;
-    if (y > 176) break;
+    y += 42;
+    if (y > 170) break;
   }
 
   if (!any) {
+    tft_.setTextColor(FG);
     tft_.setTextSize(2);
     tft_.setCursor(12, 104);
     tft_.print("tap player card");
   }
 
+  tft_.setTextColor(0xBDF7);
   tft_.setTextSize(1);
-  tft_.setCursor(8, 212);
+  tft_.setCursor(8, 218);
   tft_.print("X:back   M:menu   Y:select");
 
   if (game.context().flash[0] != '\0') {
     tft_.setTextSize(1);
-    tft_.setCursor(8, 228);
+    tft_.setTextColor(WARN);
+    tft_.setCursor(8, 232);
     tft_.print(game.context().flash);
   }
 }
@@ -363,8 +387,8 @@ void DisplayUi::drawWinner(const GameLogic &game, const ActionContext &ctx) {
 }
 
 void DisplayUi::render(const GameLogic &game, float batteryPercent) {
-  drawStatusBar(game.state(), batteryPercent);
   clearMain();
+  drawStatusBar(game.state(), batteryPercent);
 
   switch (game.state()) {
     case UiState::HOME:
@@ -449,14 +473,14 @@ void DisplayUi::renderProgramming(const char *category, uint8_t itemId, const ch
 
 void DisplayUi::renderLobby(uint8_t registeredCount, uint8_t requiredCount, const bool activePlayers[GAME_MAX_PLAYERS], bool fundingStage, const char *message) {
   clearMain();
-  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
-  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.fillRect(0, 0, SCREEN_W, 22, ACCENT);
+  tft_.drawFastHLine(0, 22, SCREEN_W, 0x4B3B);
   tft_.setTextColor(FG);
   tft_.setTextSize(1);
   tft_.setCursor(6, 6);
   tft_.print("setup");
 
-  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, 0x4B3B);
   tft_.setTextSize(2);
   tft_.setCursor(12, 36);
   tft_.print(fundingStage ? "fund players" : "register players");
@@ -471,11 +495,14 @@ void DisplayUi::renderLobby(uint8_t registeredCount, uint8_t requiredCount, cons
   tft_.setTextSize(2);
   for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
     if (!activePlayers[i]) continue;
-    drawTokenGlyph(tft_, 12, y + 4, i + 1);
+    uint16_t c = playerColor(i + 1);
+    drawTokenGlyph(tft_, 12, y + 4, i + 1, c);
+    tft_.setTextColor(c);
     tft_.setCursor(34, y);
     tft_.print(i + 1);
     y += 24;
   }
+  tft_.setTextColor(FG);
 
   tft_.setTextSize(1);
   tft_.setCursor(8, 212);
@@ -495,21 +522,21 @@ void DisplayUi::renderLobby(uint8_t registeredCount, uint8_t requiredCount, cons
 
 void DisplayUi::renderActionMenu(uint8_t selected) {
   clearMain();
-  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
-  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.fillRect(0, 0, SCREEN_W, 22, ACCENT);
+  tft_.drawFastHLine(0, 22, SCREEN_W, 0x4B3B);
   tft_.setTextColor(FG);
   tft_.setTextSize(1);
   tft_.setCursor(6, 6);
   tft_.print("menu");
 
-  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, 0x4B3B);
   const char *labels[3] = {"GO +200", "JAIL -100", "TRAIN -100"};
   for (uint8_t i = 0; i < 3; i++) {
     const int y = 44 + i * 52;
     if (i == selected) {
-      tft_.fillRect(12, y - 2, SCREEN_W - 24, 40, SOFT);
+      tft_.fillRect(12, y - 2, SCREEN_W - 24, 40, 0x1B6D);
     }
-    tft_.drawRect(12, y - 2, SCREEN_W - 24, 40, FG);
+    tft_.drawRect(12, y - 2, SCREEN_W - 24, 40, i == selected ? WARN : 0x4B3B);
     tft_.setTextSize(2);
     tft_.setCursor(24, y + 8);
     if (i == 0) tft_.print("# ");
