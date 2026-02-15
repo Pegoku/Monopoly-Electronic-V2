@@ -29,7 +29,7 @@ class DisplayUi {
   void drawStatusBar(UiState state, float batteryPercent);
   void clearMain();
 
-  Adafruit_ST7789 tft_{PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_RST};
+  Adafruit_ST7789 tft_{&SPI, PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_RST};
   bool hasLastState_ = false;
   UiState lastState_ = UiState::HOME;
   int lastBattery_ = -1;

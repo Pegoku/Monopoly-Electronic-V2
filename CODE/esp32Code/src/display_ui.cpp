@@ -102,6 +102,8 @@ bool DisplayUi::begin() {
     pinMode(PIN_TFT_RST, OUTPUT);
   }
 
+  SPI.begin(PIN_TFT_SCLK, PIN_TFT_MISO, PIN_TFT_MOSI, PIN_TFT_CS);
+
   tft_.init(240, 320);
   tft_.setRotation(3);
   tft_.invertDisplay(false);
@@ -137,7 +139,7 @@ void DisplayUi::drawStatusBar(UiState state, float batteryPercent) {
 }
 
 void DisplayUi::drawHome(const GameLogic &game) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   const PlayerState *players = game.players();
 
   tft_.drawRect(4, 26, SCREEN_W - 8, 188, 0x4B3B);
@@ -183,7 +185,7 @@ void DisplayUi::drawHome(const GameLogic &game) {
 
 void DisplayUi::drawWaitCard(const ActionContext &ctx, bool fullRedraw) {
   if (fullRedraw) {
-    clearMain();
+    tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   }
 
   const int x = 116;
@@ -245,7 +247,7 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx, bool fullRedraw) {
 }
 
 void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
@@ -266,7 +268,7 @@ void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &
 }
 
 void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   const int rent = prop->baseRent * prop->level;
   tft_.setTextColor(FG);
@@ -289,7 +291,7 @@ void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ct
 }
 
 void DisplayUi::drawEvent(const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -304,7 +306,7 @@ void DisplayUi::drawEvent(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawAuction(const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -325,7 +327,7 @@ void DisplayUi::drawAuction(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawDebt(const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -341,7 +343,7 @@ void DisplayUi::drawDebt(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawGo() {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -358,7 +360,7 @@ void DisplayUi::drawGo() {
 }
 
 void DisplayUi::drawTrain() {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -375,7 +377,7 @@ void DisplayUi::drawTrain() {
 }
 
 void DisplayUi::drawJail() {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -392,7 +394,7 @@ void DisplayUi::drawJail() {
 }
 
 void DisplayUi::drawWinner(const GameLogic &game, const ActionContext &ctx) {
-  clearMain();
+  tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   const PlayerState *winner = &game.players()[ctx.debtorId - 1];
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
