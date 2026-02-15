@@ -1,0 +1,627 @@
+:root {
+  --paper-width: 210mm;
+  --paper-height: 297mm;
+  --card-width: 54mm;
+  --card-height: 85.5mm;
+  --grid-columns: 3;
+  --grid-rows: 3;
+  --grid-gap: 4mm;
+  --grid-width: 170mm;
+  --grid-height: 264.5mm;
+  --paper-bg: #f5f1e8;
+  --ink: #22222a;
+  --panel: #ffffff;
+  --accent: #0a5f3c;
+  --accent-soft: #dcefe6;
+  --cut-mark: #6c6f7d;
+  --title-font: "Bebas Neue", "Oswald", "Trebuchet MS", sans-serif;
+  --body-font: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body-font);
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 15%, #efe7d7 0%, transparent 36%),
+    radial-gradient(circle at 80% 0%, #d7e4da 0%, transparent 25%),
+    linear-gradient(160deg, #f6f0e3 0%, #e6ece4 100%);
+}
+
+.app-header {
+  padding: 1.2rem 1rem 0.3rem;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-family: var(--title-font);
+  letter-spacing: 0.08em;
+  font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+}
+
+.app-header p {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, var(--panel), #f3ebdc 35%);
+  border: 1px solid #d7d1c5;
+  border-radius: 14px;
+  width: min(940px, 96vw);
+  margin: 0.5rem auto 1rem;
+  padding: 0.8rem;
+  box-shadow: 0 8px 20px rgba(43, 43, 43, 0.1);
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.92rem;
+}
+
+.control-item input[type="text"] {
+  border: 1px solid #c7c4b8;
+  border-radius: 8px;
+  padding: 0.38rem 0.55rem;
+  background: #f6f5f1;
+  min-width: 210px;
+}
+
+.control-item select {
+  border: 1px solid #c7c4b8;
+  border-radius: 8px;
+  padding: 0.38rem 0.5rem;
+  background: #f6f5f1;
+  min-width: 130px;
+}
+
+.checkbox-row {
+  padding: 0.25rem 0.2rem;
+}
+
+button {
+  border: 1px solid #0f6a45;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #158053, #0d6a43);
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 102, 67, 0.25);
+}
+
+.sheet-container {
+  display: grid;
+  gap: 12mm;
+  justify-content: center;
+  padding-bottom: 1.2rem;
+}
+
+.sheet {
+  width: var(--paper-width);
+  height: var(--paper-height);
+  background: #ffffff;
+  border: 1px solid #c5c5c5;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.sheet-label {
+  position: absolute;
+  right: 6mm;
+  top: 4mm;
+  font-size: 3.2mm;
+  letter-spacing: 0.05em;
+  color: #4d4f56;
+}
+
+.card-grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--grid-width);
+  height: var(--grid-height);
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), var(--card-width));
+  grid-template-rows: repeat(var(--grid-rows), var(--card-height));
+  gap: var(--grid-gap);
+}
+
+.card {
+  position: relative;
+  width: var(--card-width);
+  height: var(--card-height);
+  border: 0.3mm solid #c8c8c8;
+  border-radius: 3mm;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.card::before,
+.card::after {
+  display: none;
+}
+
+.blank-card {
+  border-style: dashed;
+  border-color: #cecece;
+  background: repeating-linear-gradient(135deg, #fbfbfb, #fbfbfb 2mm, #f3f3f3 2mm, #f3f3f3 4mm);
+}
+
+.deed-card {
+  border-color: #cecece;
+  background: #ffffff;
+  color: #202126;
+}
+
+.deed-header {
+  height: 12.5mm;
+  background: var(--deed-color, #20aa57);
+  border-bottom: 0;
+  display: grid;
+  place-items: center;
+}
+
+.deed-number {
+  width: 9mm;
+  height: 9mm;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff3ae 0%, #f0dd8b 55%, #caae57 100%);
+  border: 0.3mm solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0.35mm 0.9mm rgba(0, 0, 0, 0.24);
+  display: grid;
+  place-items: center;
+  font-family: "Arial Black", "Arial", sans-serif;
+  font-size: 4.1mm;
+  line-height: 1;
+}
+
+.deed-name {
+  text-align: center;
+  padding: 2.2mm 2mm 1.2mm;
+  font-family: "Arial Black", "Impact", sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: 5.25mm;
+  line-height: 1.03;
+  min-height: 13.2mm;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+}
+
+.deed-name span {
+  display: block;
+  white-space: nowrap;
+}
+
+.deed-core {
+  padding: 0.4mm 2.1mm 0.7mm;
+  font-size: 2.2mm;
+  display: grid;
+  gap: 0.7mm;
+}
+
+.deed-price {
+  text-align: center;
+  font-weight: 700;
+  font-size: 2.7mm;
+}
+
+.deed-rent-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 2.95mm;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.deed-rent-table {
+  display: grid;
+  gap: 0;
+  border-radius: 1.1mm;
+  overflow: hidden;
+  border: 0.2mm solid rgba(80, 80, 80, 0.12);
+}
+
+.deed-rent-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 3.9mm;
+  min-height: 7.3mm;
+  padding: 0.55mm 1mm;
+  background: color-mix(in srgb, var(--deed-color) calc(10% + var(--row-index) * 14%), #ffffff);
+  border-top: 0.2mm solid rgba(255, 255, 255, 0.45);
+}
+
+.deed-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4mm;
+}
+
+.deed-level .lvl {
+  width: 3.2mm;
+  height: 3.2mm;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  border: 0.18mm solid #2f2f2f;
+  background: rgba(255, 255, 255, 0.75);
+  color: #202020;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 2mm;
+  font-family: "Arial", sans-serif;
+  font-weight: 700;
+}
+
+.deed-level .lvl.on {
+  background: #1f2228;
+  color: #ffffff;
+}
+
+.deed-footer {
+  margin-top: auto;
+  border-top: 0;
+  padding: 0.7mm 1.8mm 0.8mm;
+  font-size: 1.95mm;
+  text-align: center;
+  color: #4a4a4a;
+  background: #ffffff;
+}
+
+.transport-deed {
+  background: #ffffff;
+}
+
+.utility-deed {
+  background: #ffffff;
+}
+
+.player-bank-card {
+  border: 0.3mm solid #2d323f;
+  background:
+    radial-gradient(circle at 62% 45%, rgba(255, 221, 133, 0.09) 0%, rgba(255, 221, 133, 0.02) 18%, transparent 45%),
+    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.03) 0, rgba(255, 255, 255, 0.03) 1.05mm, rgba(0, 0, 0, 0.08) 1.05mm, rgba(0, 0, 0, 0.08) 2.1mm),
+    linear-gradient(165deg, #101217 0%, #1a1c22 46%, #090b10 100%);
+  color: #f3ebd0;
+}
+
+.player-arrows {
+  position: absolute;
+  left: 4.2mm;
+  top: 8.8mm;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5mm;
+}
+
+.player-arrows span {
+  width: 0;
+  height: 0;
+  border-top: 1.3mm solid transparent;
+  border-bottom: 1.3mm solid transparent;
+  border-left: 2.4mm solid #d3b268;
+  filter: drop-shadow(0 0.2mm 0.2mm rgba(0, 0, 0, 0.5));
+}
+
+.player-gold-rail {
+  position: absolute;
+  left: 25.9mm;
+  top: 0;
+  width: 5.3mm;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(123, 92, 35, 0.22) 0%,
+    #e2c277 13%,
+    #cfae66 50%,
+    #e3c579 87%,
+    rgba(123, 92, 35, 0.24) 100%
+  );
+  box-shadow: inset 0 0 0.45mm rgba(255, 234, 180, 0.28);
+}
+
+.player-logo-vertical {
+  position: absolute;
+  right: 4mm;
+  top: 9mm;
+  width: 14.8mm;
+  height: 58mm;
+  border: 0.22mm solid #e2c987;
+  box-shadow:
+    inset 0 0 0 0.22mm rgba(118, 80, 20, 0.9),
+    0 0.3mm 0.8mm rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, #db2d2a, #b01e1d);
+  color: #ffffff;
+  font-family: "Arial Black", sans-serif;
+  letter-spacing: 0;
+  text-align: center;
+  font-size: 7.5mm;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: grid;
+  place-items: center;
+  text-shadow: 0 0.25mm 0 rgba(0, 0, 0, 0.45);
+}
+
+.player-chip {
+  position: absolute;
+  top: 6.6mm;
+  left: 18.2mm;
+  width: 8.9mm;
+  height: 10.9mm;
+  border-radius: 1.1mm;
+  background:
+    repeating-linear-gradient(90deg, rgba(170, 132, 64, 0.8), rgba(170, 132, 64, 0.8) 1.2mm, rgba(236, 198, 113, 0.9) 1.2mm, rgba(236, 198, 113, 0.9) 2.4mm),
+    linear-gradient(145deg, #f4dfa7, #bd9c5a);
+  box-shadow: inset 0 0 0 0.22mm rgba(255, 236, 190, 0.8);
+}
+
+.player-bank-number {
+  position: absolute;
+  left: 7.4mm;
+  top: 7.2mm;
+  font-family: "Courier New", monospace;
+  font-size: 4.5mm;
+  letter-spacing: 0.07em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  line-height: 1.35;
+  color: #d6b872;
+  text-shadow: 0 0 0.5mm rgba(255, 226, 153, 0.2);
+}
+
+.player-token {
+  position: absolute;
+  left: 7mm;
+  bottom: 5.6mm;
+  display: grid;
+  place-items: center;
+  color: #3fd975;
+  filter: drop-shadow(0 0.25mm 0.4mm rgba(0, 0, 0, 0.45));
+}
+
+.player-token i {
+  font-size: 6.7mm;
+  transform: rotate(90deg);
+}
+
+
+.special-card {
+  background: linear-gradient(175deg, #fffef9 0%, #f8f4ea 100%);
+}
+
+.special-head {
+  font-family: var(--title-font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 6.5mm;
+  padding: 3.5mm 1mm 1mm;
+}
+
+.special-icon {
+  width: 17mm;
+  height: 17mm;
+  margin: 1mm auto;
+  border-radius: 50%;
+  border: 0.45mm solid #202123;
+  display: grid;
+  place-items: center;
+  font-family: var(--title-font);
+  font-size: 7.3mm;
+}
+
+.special-text {
+  margin: 0;
+  padding: 1.4mm 2.6mm;
+  text-align: center;
+  font-size: 2.95mm;
+  line-height: 1.35;
+}
+
+.card-back {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 2.2mm;
+}
+
+.back-top {
+  display: none;
+}
+
+.back-panel {
+  flex: 1;
+  border: 0;
+  background: #171a22;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.back-panel-title {
+  background: linear-gradient(150deg, #1f7f95 0%, #155e75 48%, #0f2f43 100%);
+}
+
+.back-diamond {
+  width: 20mm;
+  height: 20mm;
+  transform: rotate(45deg);
+  border-radius: 2mm;
+  background: linear-gradient(145deg, #f5d780, #d7a842);
+  box-shadow: 0 0.5mm 1.2mm rgba(0, 0, 0, 0.28);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-family: "Arial Black", sans-serif;
+  font-size: 9mm;
+}
+
+.back-diamond::before {
+  content: "M";
+  transform: rotate(-45deg);
+}
+
+.back-panel-community {
+  background: linear-gradient(160deg, #323946, #12161f);
+}
+
+.back-house {
+  color: #8fe1e0;
+  font-size: 21mm;
+  z-index: 1;
+}
+
+.back-panel-chance {
+  background:
+    repeating-linear-gradient(130deg, rgba(255, 255, 255, 0.045) 0, rgba(255, 255, 255, 0.045) 2mm, rgba(0, 0, 0, 0.04) 2mm, rgba(0, 0, 0, 0.04) 4mm),
+    linear-gradient(150deg, #1f8ca1 0%, #166a82 48%, #0f3348 100%);
+}
+
+.back-chance-diamond {
+  width: 18.5mm;
+  height: 18.5mm;
+  transform: rotate(45deg);
+  border-radius: 1.8mm;
+  background: linear-gradient(150deg, #f2cf75, #cfa044);
+  box-shadow: 0 0.5mm 1mm rgba(0, 0, 0, 0.28);
+  position: relative;
+  z-index: 1;
+}
+
+.back-chance-diamond .m-main,
+.back-chance-diamond .m-shadow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-family: "Arial Black", sans-serif;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  line-height: 1;
+}
+
+.back-chance-diamond .m-main {
+  color: #ffffff;
+  font-size: 8.2mm;
+}
+
+.back-chance-diamond .m-shadow {
+  color: #ffffff;
+  font-size: 7mm;
+  top: 64%;
+  left: 36%;
+  opacity: 0.9;
+}
+
+.back-panel-player {
+  background: linear-gradient(160deg, #2a2f3c, #121722);
+}
+
+.back-player-icon {
+  color: #74a9ff;
+  font-size: 22mm;
+  z-index: 1;
+}
+
+.chance-theme {
+  color: #ad4f00;
+}
+
+.chance-theme .special-icon,
+.chance-theme .back-panel {
+  border-color: #c66f24;
+}
+
+.chest-theme {
+  color: #00707d;
+}
+
+.chest-theme .special-icon,
+.chest-theme .back-panel {
+  border-color: #197f8e;
+}
+
+.player-theme {
+  color: #4f2f78;
+}
+
+.player-theme .special-icon {
+  border-color: #6f49a8;
+  font-size: 7mm;
+  padding: 0;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.player-theme .special-icon i {
+  font-size: 7mm;
+}
+
+
+
+@media (max-width: 900px) {
+  .sheet {
+    transform: scale(0.73);
+    transform-origin: top center;
+    margin-bottom: -72mm;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .app-header,
+  .controls {
+    display: none;
+  }
+
+  .sheet-container {
+    gap: 0;
+    padding: 0;
+  }
+
+  .sheet {
+    border: none;
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+}

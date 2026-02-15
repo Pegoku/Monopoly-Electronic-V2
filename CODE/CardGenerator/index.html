@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monopoly Card Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1 data-i18n="appTitle">Monopoly Card Generator</h1>
+    <p data-i18n="appSubtitle">Print-ready 54 x 85.5 mm cards laid out on A4 for duplex printing.</p>
+  </header>
+
+  <section id="controlsSection" class="controls" aria-label="Generator Controls">
+    <label class="control-item" for="languageSelect">
+      <span data-i18n="languageLabel">Language</span>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="es">Espanol</option>
+      </select>
+    </label>
+
+    <label class="control-item">
+      <span data-i18n="cardSizeLabel">Card Size</span>
+      <input id="cardSizeInput" type="text" value="54 x 85.5 mm (NFC standard)" disabled>
+    </label>
+
+    <label class="control-item checkbox-row">
+      <input id="mirrorBacks" type="checkbox">
+      <span data-i18n="mirrorBacksLabel">Mirror back pages (better for manual flip printing)</span>
+    </label>
+
+    <label class="control-item checkbox-row">
+      <input id="includeActionDecks" type="checkbox">
+      <span data-i18n="includeActionDecksLabel">Include Chance and Community Chest</span>
+    </label>
+
+    <button id="renderBtn" type="button" data-i18n="generateBtn">Generate Layout</button>
+    <button id="printBtn" type="button" data-i18n="printBtn">Print / Save A4 PDF</button>
+  </section>
+
+  <main>
+    <div id="sheetContainer" class="sheet-container" aria-live="polite"></div>
+  </main>
+
+  <template id="blankCardTemplate">
+    <article class="card blank-card" aria-hidden="true"></article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
