@@ -105,6 +105,7 @@ bool DisplayUi::begin() {
   tft_.init(240, 320);
   tft_.setRotation(3);
   tft_.invertDisplay(false);
+  tft_.setSPISpeed(40000000);
 
   tft_.fillScreen(ST77XX_RED);
   delay(120);
@@ -136,6 +137,7 @@ void DisplayUi::drawStatusBar(UiState state, float batteryPercent) {
 }
 
 void DisplayUi::drawHome(const GameLogic &game) {
+  clearMain();
   const PlayerState *players = game.players();
 
   tft_.drawRect(4, 26, SCREEN_W - 8, 188, 0x4B3B);
@@ -179,7 +181,11 @@ void DisplayUi::drawHome(const GameLogic &game) {
   }
 }
 
-void DisplayUi::drawWaitCard(const ActionContext &ctx) {
+void DisplayUi::drawWaitCard(const ActionContext &ctx, bool fullRedraw) {
+  if (fullRedraw) {
+    clearMain();
+  }
+
   const int x = 116;
   const int y = 52;
   const int w = 86;
@@ -187,6 +193,12 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx) {
   const int step = 8;
   const int dash = 4;
   const int phase = (millis() / 120) % 2;
+
+  if (!fullRedraw) {
+    tft_.fillRect(x - 2, y - 2, w + 6, h + 6, BG);
+    tft_.fillRect(88, 28, 140, 20, BG);
+    tft_.fillRect(0, 210, SCREEN_W, 30, BG);
+  }
 
   tft_.setTextSize(2);
   tft_.setTextColor(FG);
@@ -233,6 +245,7 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &ctx) {
+  clearMain();
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
@@ -253,6 +266,7 @@ void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &
 }
 
 void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ctx) {
+  clearMain();
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   const int rent = prop->baseRent * prop->level;
   tft_.setTextColor(FG);
@@ -275,6 +289,7 @@ void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ct
 }
 
 void DisplayUi::drawEvent(const ActionContext &ctx) {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -289,6 +304,7 @@ void DisplayUi::drawEvent(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawAuction(const ActionContext &ctx) {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -309,6 +325,7 @@ void DisplayUi::drawAuction(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawDebt(const ActionContext &ctx) {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -324,6 +341,7 @@ void DisplayUi::drawDebt(const ActionContext &ctx) {
 }
 
 void DisplayUi::drawGo() {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -340,6 +358,7 @@ void DisplayUi::drawGo() {
 }
 
 void DisplayUi::drawTrain() {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -356,6 +375,7 @@ void DisplayUi::drawTrain() {
 }
 
 void DisplayUi::drawJail() {
+  clearMain();
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
@@ -372,6 +392,7 @@ void DisplayUi::drawJail() {
 }
 
 void DisplayUi::drawWinner(const GameLogic &game, const ActionContext &ctx) {
+  clearMain();
   const PlayerState *winner = &game.players()[ctx.debtorId - 1];
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
@@ -387,44 +408,72 @@ void DisplayUi::drawWinner(const GameLogic &game, const ActionContext &ctx) {
 }
 
 void DisplayUi::render(const GameLogic &game, float batteryPercent) {
-  clearMain();
-  drawStatusBar(game.state(), batteryPercent);
+  const UiState nowState = game.state();
+  const int nowBattery = static_cast<int>(batteryPercent + 0.5f);
+  const bool stateChanged = !hasLastState_ || nowState != lastState_;
+  const bool batteryChanged = nowBattery != lastBattery_;
 
-  switch (game.state()) {
-    case UiState::HOME:
-      drawHome(game);
-      break;
-    case UiState::WAIT_CARD:
-      drawWaitCard(game.context());
-      break;
-    case UiState::PROPERTY_UNOWNED:
-      drawPropertyUnowned(game, game.context());
-      break;
-    case UiState::PROPERTY_OWNED:
-      drawPropertyOwned(game, game.context());
-      break;
-    case UiState::EVENT:
-      drawEvent(game.context());
-      break;
-    case UiState::AUCTION:
-      drawAuction(game.context());
-      break;
-    case UiState::DEBT:
-      drawDebt(game.context());
-      break;
-    case UiState::GO:
-      drawGo();
-      break;
-    case UiState::JAIL:
-      drawJail();
-      break;
-    case UiState::TRAIN:
-      drawTrain();
-      break;
-    case UiState::WINNER:
-      drawWinner(game, game.context());
-      break;
+  if (stateChanged || batteryChanged) {
+    drawStatusBar(nowState, batteryPercent);
+    lastBattery_ = nowBattery;
   }
+
+  if (stateChanged) {
+    switch (nowState) {
+      case UiState::HOME:
+        drawHome(game);
+        break;
+      case UiState::WAIT_CARD:
+        drawWaitCard(game.context(), true);
+        break;
+      case UiState::PROPERTY_UNOWNED:
+        drawPropertyUnowned(game, game.context());
+        break;
+      case UiState::PROPERTY_OWNED:
+        drawPropertyOwned(game, game.context());
+        break;
+      case UiState::EVENT:
+        drawEvent(game.context());
+        break;
+      case UiState::AUCTION:
+        drawAuction(game.context());
+        break;
+      case UiState::DEBT:
+        drawDebt(game.context());
+        break;
+      case UiState::GO:
+        drawGo();
+        break;
+      case UiState::JAIL:
+        drawJail();
+        break;
+      case UiState::TRAIN:
+        drawTrain();
+        break;
+      case UiState::WINNER:
+        drawWinner(game, game.context());
+        break;
+    }
+  } else {
+    switch (nowState) {
+      case UiState::WAIT_CARD:
+        drawWaitCard(game.context(), false);
+        break;
+      case UiState::AUCTION:
+      case UiState::HOME:
+      case UiState::DEBT:
+        // these can change in-place while state remains same
+        if (nowState == UiState::AUCTION) drawAuction(game.context());
+        if (nowState == UiState::HOME) drawHome(game);
+        if (nowState == UiState::DEBT) drawDebt(game.context());
+        break;
+      default:
+        break;
+    }
+  }
+
+  hasLastState_ = true;
+  lastState_ = nowState;
 }
 
 void DisplayUi::renderProgramming(const char *category, uint8_t itemId, const char *detail, bool armWrite, const char *message) {

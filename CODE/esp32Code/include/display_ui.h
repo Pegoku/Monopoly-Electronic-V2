@@ -16,7 +16,7 @@ class DisplayUi {
 
  private:
   void drawHome(const GameLogic &game);
-  void drawWaitCard(const ActionContext &ctx);
+  void drawWaitCard(const ActionContext &ctx, bool fullRedraw = true);
   void drawPropertyUnowned(const GameLogic &game, const ActionContext &ctx);
   void drawPropertyOwned(const GameLogic &game, const ActionContext &ctx);
   void drawEvent(const ActionContext &ctx);
@@ -30,4 +30,7 @@ class DisplayUi {
   void clearMain();
 
   Adafruit_ST7789 tft_{PIN_TFT_CS, PIN_TFT_DC, PIN_TFT_MOSI, PIN_TFT_SCLK, PIN_TFT_RST};
+  bool hasLastState_ = false;
+  UiState lastState_ = UiState::HOME;
+  int lastBattery_ = -1;
 };
