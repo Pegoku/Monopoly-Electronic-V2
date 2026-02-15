@@ -29,6 +29,8 @@ class GameLogic {
   void onBtn1();
   void onBtn2();
   void onBtn3();
+  void triggerMenuAction(uint8_t action);
+  void primePlayer(uint8_t playerId, int32_t balance);
   void onTick();
 
   void onPlayerCard(const CardTap &tap, CardManager &cards);

@@ -6,6 +6,7 @@ namespace {
 constexpr uint16_t BG = ST77XX_WHITE;
 constexpr uint16_t FG = ST77XX_BLACK;
 constexpr uint16_t ACCENT = ST77XX_WHITE;
+constexpr uint16_t SOFT = 0xBDF7;
 
 const char *stateName(UiState state) {
   switch (state) {
@@ -25,6 +26,8 @@ const char *stateName(UiState state) {
       return "DEBT";
     case UiState::GO:
       return "GO";
+    case UiState::TRAIN:
+      return "TRAIN";
     case UiState::JAIL:
       return "JAIL";
     case UiState::WINNER:
@@ -42,20 +45,34 @@ const char *iconByPlayerId(uint8_t id) {
 void drawTokenGlyph(Adafruit_ST7789 &tft, int16_t x, int16_t y, uint8_t playerId) {
   const uint8_t kind = (playerId - 1) % 4;
   if (kind == 0) {
-    tft.fillTriangle(x, y + 4, x + 10, y, x + 10, y + 8, FG);
+    // car
+    tft.drawRect(x + 1, y + 3, 10, 5, FG);
+    tft.drawFastHLine(x + 3, y + 2, 6, FG);
+    tft.fillCircle(x + 3, y + 9, 1, FG);
+    tft.fillCircle(x + 9, y + 9, 1, FG);
     return;
   }
   if (kind == 1) {
-    tft.fillRect(x + 2, y, 8, 8, FG);
-    tft.fillRect(x + 10, y + 2, 3, 4, FG);
+    // boat
+    tft.drawFastHLine(x + 1, y + 7, 10, FG);
+    tft.drawLine(x + 1, y + 7, x + 4, y + 10, FG);
+    tft.drawLine(x + 11, y + 7, x + 8, y + 10, FG);
+    tft.drawFastVLine(x + 6, y + 1, 6, FG);
+    tft.drawLine(x + 6, y + 1, x + 10, y + 4, FG);
     return;
   }
   if (kind == 2) {
-    tft.drawCircle(x + 5, y + 4, 4, FG);
-    tft.drawFastHLine(x + 9, y + 4, 4, FG);
+    // plane
+    tft.drawFastHLine(x + 1, y + 5, 10, FG);
+    tft.drawLine(x + 5, y + 1, x + 7, y + 5, FG);
+    tft.drawLine(x + 5, y + 9, x + 7, y + 5, FG);
+    tft.drawPixel(x + 10, y + 4, FG);
     return;
   }
-  tft.fillTriangle(x, y + 2, x + 10, y + 2, x + 5, y + 8, FG);
+  // hat
+  tft.drawFastHLine(x + 1, y + 9, 10, FG);
+  tft.drawFastHLine(x + 3, y + 7, 6, FG);
+  tft.drawFastHLine(x + 4, y + 5, 4, FG);
 }
 }  // namespace
 
@@ -89,32 +106,47 @@ void DisplayUi::clearMain() {
 }
 
 void DisplayUi::drawStatusBar(UiState state, float batteryPercent) {
-  (void)state;
-  (void)batteryPercent;
+  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
+  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.setTextColor(FG);
+  tft_.setTextSize(1);
+  tft_.setCursor(6, 6);
+  tft_.print("bank");
+  tft_.setCursor(44, 6);
+  tft_.print(stateName(state));
+  tft_.setCursor(278, 6);
+  tft_.print((int)batteryPercent);
+  tft_.print('%');
 }
 
 void DisplayUi::drawHome(const GameLogic &game) {
   const PlayerState *players = game.players();
 
   tft_.setTextColor(FG);
-  tft_.setTextSize(3);
-  int y = 20;
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+
+  tft_.setTextSize(2);
+  int y = 40;
   bool any = false;
   for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
     if (!players[i].active || players[i].bankrupt) continue;
     any = true;
-    drawTokenGlyph(tft_, 8, y + 6, players[i].id);
-    tft_.setCursor(36, y);
+    drawTokenGlyph(tft_, 16, y + 4, players[i].id);
+    tft_.setCursor(42, y);
     tft_.print(players[i].balance);
-    y += 34;
-    if (y > 200) break;
+    y += 28;
+    if (y > 176) break;
   }
 
   if (!any) {
     tft_.setTextSize(2);
-    tft_.setCursor(12, 92);
+    tft_.setCursor(12, 104);
     tft_.print("tap player card");
   }
+
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  tft_.print("X:back   M:menu   Y:select");
 
   if (game.context().flash[0] != '\0') {
     tft_.setTextSize(1);
@@ -131,6 +163,11 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx) {
   const int step = 8;
   const int dash = 4;
   const int phase = (millis() / 120) % 2;
+
+  tft_.setTextSize(2);
+  tft_.setTextColor(FG);
+  tft_.setCursor(96, 30);
+  tft_.print("TAP CARD");
 
   for (int i = 0; i < w; i += step) {
     if (((i / step) + phase) % 2 == 0) {
@@ -152,6 +189,18 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx) {
     tft_.print("x");
   }
 
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  if (ctx.waitReason == WaitReason::BUY_PLAYER) {
+    tft_.print("waiting bank card for purchase");
+  } else if (ctx.waitReason == WaitReason::RENT_PAYER) {
+    tft_.print("waiting payer bank card");
+  } else if (ctx.waitReason == WaitReason::EVENT_TARGET) {
+    tft_.print("waiting target bank card");
+  } else {
+    tft_.print("waiting card...");
+  }
+
   if (ctx.noCancel) {
     tft_.setTextSize(1);
     tft_.setCursor(8, 228);
@@ -162,49 +211,62 @@ void DisplayUi::drawWaitCard(const ActionContext &ctx) {
 void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &ctx) {
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.setTextSize(1);
+  tft_.setCursor(12, 32);
+  tft_.print("unowned property");
   tft_.setTextSize(3);
-  tft_.setCursor(20, 62);
+  tft_.setCursor(20, 68);
   tft_.print(prop->id);
-  tft_.setCursor(20, 120);
+  tft_.setCursor(20, 122);
   tft_.print(prop->basePrice);
   tft_.setTextSize(2);
-  tft_.setCursor(248, 62);
+  tft_.setCursor(236, 68);
   tft_.print("house");
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
-  tft_.print("BTN1 buy  BTN3 auction  BTN2 back");
+  tft_.setCursor(8, 212);
+  tft_.print("X back   M auction   Y buy");
 }
 
 void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ctx) {
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
   const int rent = prop->baseRent * prop->level;
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.setTextSize(1);
+  tft_.setCursor(12, 32);
+  tft_.print("owned property");
   tft_.setTextSize(2);
-  tft_.setCursor(10, 66);
+  tft_.setCursor(10, 70);
   tft_.print(iconByPlayerId(prop->ownerId));
-  tft_.setCursor(106, 66);
+  tft_.setCursor(106, 70);
   tft_.print(rent);
-  tft_.setCursor(10, 110);
+  tft_.setCursor(10, 114);
   tft_.print(prop->id);
-  tft_.setCursor(106, 110);
+  tft_.setCursor(106, 114);
   tft_.print(prop->level);
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
-  tft_.print("BTN1 continue");
+  tft_.setCursor(8, 212);
+  tft_.print("X back   M menu   Y continue");
 }
 
 void DisplayUi::drawEvent(const ActionContext &ctx) {
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
-  tft_.setCursor(12, 80);
+  tft_.setCursor(12, 68);
   tft_.print("event");
   tft_.setTextSize(3);
-  tft_.setCursor(12, 118);
+  tft_.setCursor(12, 112);
   tft_.print(ctx.eventId);
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  tft_.print("apply then tap bank card");
 }
 
 void DisplayUi::drawAuction(const ActionContext &ctx) {
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
   tft_.setCursor(10, 64);
   tft_.print("auction");
@@ -214,16 +276,17 @@ void DisplayUi::drawAuction(const ActionContext &ctx) {
   tft_.setCursor(10, 114);
   tft_.print(ctx.auctionBid);
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
+  tft_.setCursor(8, 212);
   if (ctx.auctionAwaitWinner) {
     tft_.print("winner tap bank card");
   } else {
-    tft_.print("BTN1 +20");
+    tft_.print("X back   M menu   Y +20");
   }
 }
 
 void DisplayUi::drawDebt(const ActionContext &ctx) {
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
   tft_.setCursor(10, 70);
   tft_.print("debt");
@@ -232,12 +295,13 @@ void DisplayUi::drawDebt(const ActionContext &ctx) {
   tft_.print('-');
   tft_.print(ctx.debtAmount);
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
+  tft_.setCursor(8, 212);
   tft_.print("tap debtor property cards");
 }
 
 void DisplayUi::drawGo() {
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
   tft_.setCursor(10, 90);
   tft_.print("go");
@@ -245,12 +309,31 @@ void DisplayUi::drawGo() {
   tft_.setCursor(10, 130);
   tft_.print("+200");
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
+  tft_.setCursor(8, 212);
   tft_.print("tap player bank card");
+  tft_.setCursor(8, 228);
+  tft_.print("X back   M menu   Y select");
+}
+
+void DisplayUi::drawTrain() {
+  tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.setTextSize(2);
+  tft_.setCursor(10, 90);
+  tft_.print("train");
+  tft_.setTextSize(3);
+  tft_.setCursor(10, 130);
+  tft_.print("100");
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  tft_.print("tap player bank card");
+  tft_.setCursor(8, 228);
+  tft_.print("X back   M menu   Y select");
 }
 
 void DisplayUi::drawJail() {
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
   tft_.setCursor(10, 90);
   tft_.print("jail");
@@ -258,13 +341,16 @@ void DisplayUi::drawJail() {
   tft_.setCursor(10, 130);
   tft_.print("100");
   tft_.setTextSize(1);
-  tft_.setCursor(8, 220);
+  tft_.setCursor(8, 212);
   tft_.print("tap player bank card");
+  tft_.setCursor(8, 228);
+  tft_.print("X back   M menu   Y select");
 }
 
 void DisplayUi::drawWinner(const GameLogic &game, const ActionContext &ctx) {
   const PlayerState *winner = &game.players()[ctx.debtorId - 1];
   tft_.setTextColor(FG);
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(2);
   tft_.setCursor(10, 80);
   tft_.print(iconByPlayerId(winner->id));
@@ -308,6 +394,9 @@ void DisplayUi::render(const GameLogic &game, float batteryPercent) {
     case UiState::JAIL:
       drawJail();
       break;
+    case UiState::TRAIN:
+      drawTrain();
+      break;
     case UiState::WINNER:
       drawWinner(game, game.context());
       break;
@@ -339,11 +428,11 @@ void DisplayUi::renderProgramming(const char *category, uint8_t itemId, const ch
 
   tft_.setTextSize(1);
   tft_.setCursor(8, 186);
-  tft_.print("B2:write  B1:prev  B3:next");
+  tft_.print("X:prev  M:write  Y:next");
   tft_.setCursor(8, 202);
-  tft_.print("B1 long:prev cat  B3 long:next cat");
+  tft_.print("X long:prev cat  Y long:next cat");
   tft_.setCursor(8, 218);
-  tft_.print("hold B1+B3 5s: exit");
+  tft_.print("hold X+CHECK 5s: exit");
 
   if (armWrite) {
     tft_.setTextSize(2);
@@ -356,4 +445,80 @@ void DisplayUi::renderProgramming(const char *category, uint8_t itemId, const ch
     tft_.setCursor(8, 124);
     tft_.print(message);
   }
+}
+
+void DisplayUi::renderLobby(uint8_t registeredCount, uint8_t requiredCount, const bool activePlayers[GAME_MAX_PLAYERS], bool fundingStage, const char *message) {
+  clearMain();
+  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
+  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.setTextColor(FG);
+  tft_.setTextSize(1);
+  tft_.setCursor(6, 6);
+  tft_.print("setup");
+
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  tft_.setTextSize(2);
+  tft_.setCursor(12, 36);
+  tft_.print(fundingStage ? "fund players" : "register players");
+
+  tft_.setTextSize(3);
+  tft_.setCursor(12, 72);
+  tft_.print(registeredCount);
+  tft_.print('/');
+  tft_.print(requiredCount);
+
+  int y = 120;
+  tft_.setTextSize(2);
+  for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
+    if (!activePlayers[i]) continue;
+    drawTokenGlyph(tft_, 12, y + 4, i + 1);
+    tft_.setCursor(34, y);
+    tft_.print(i + 1);
+    y += 24;
+  }
+
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  if (fundingStage) {
+    tft_.print("tap each player card to add money");
+  } else {
+    tft_.print("tap player cards, then CHECK");
+  }
+  tft_.setCursor(8, 228);
+  tft_.print("X:clear   M:menu   Y:start");
+
+  if (message && message[0] != '\0') {
+    tft_.setCursor(150, 228);
+    tft_.print(message);
+  }
+}
+
+void DisplayUi::renderActionMenu(uint8_t selected) {
+  clearMain();
+  tft_.fillRect(0, 0, SCREEN_W, 20, SOFT);
+  tft_.drawFastHLine(0, 20, SCREEN_W, FG);
+  tft_.setTextColor(FG);
+  tft_.setTextSize(1);
+  tft_.setCursor(6, 6);
+  tft_.print("menu");
+
+  tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
+  const char *labels[3] = {"GO +200", "JAIL -100", "TRAIN -100"};
+  for (uint8_t i = 0; i < 3; i++) {
+    const int y = 44 + i * 52;
+    if (i == selected) {
+      tft_.fillRect(12, y - 2, SCREEN_W - 24, 40, SOFT);
+    }
+    tft_.drawRect(12, y - 2, SCREEN_W - 24, 40, FG);
+    tft_.setTextSize(2);
+    tft_.setCursor(24, y + 8);
+    if (i == 0) tft_.print("# ");
+    if (i == 1) tft_.print("[] ");
+    if (i == 2) tft_.print("= ");
+    tft_.print(labels[i]);
+  }
+
+  tft_.setTextSize(1);
+  tft_.setCursor(8, 212);
+  tft_.print("X:close  M:next  Y:select");
 }

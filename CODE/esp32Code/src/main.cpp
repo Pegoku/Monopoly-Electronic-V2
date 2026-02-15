@@ -37,6 +37,7 @@ ButtonInput btn3;
 
 enum class ButtonPress : uint8_t { None, Short, Long };
 enum class ProgramCategory : uint8_t { Player, Property, Event };
+enum class AppMode : uint8_t { LobbyRegister, Running };
 
 constexpr uint32_t LONG_PRESS_MS = 700;
 constexpr uint32_t PROGRAM_MODE_HOLD_MS = 5000;
@@ -53,6 +54,16 @@ bool comboLatch = false;
 bool uiDirty = true;
 int8_t lastWaitAnimPhase = -1;
 
+AppMode appMode = AppMode::LobbyRegister;
+bool activeLobbyPlayers[GAME_MAX_PLAYERS] = {false};
+bool fundedLobbyPlayers[GAME_MAX_PLAYERS] = {false};
+uint8_t registeredCount = 0;
+uint8_t requiredPlayerCount = 0;
+char lobbyMessage[40] = {0};
+
+bool actionMenuOpen = false;
+uint8_t actionMenuIndex = 0;
+
 void logLine(const char *text) {
   Serial.println(text);
   Serial0.println(text);
@@ -66,6 +77,22 @@ void logf(const char *fmt, ...) {
   va_end(args);
   Serial.println(buf);
   Serial0.println(buf);
+}
+
+void setLobbyMessage(const char *msg) {
+  strncpy(lobbyMessage, msg, sizeof(lobbyMessage) - 1);
+  lobbyMessage[sizeof(lobbyMessage) - 1] = '\0';
+  uiDirty = true;
+}
+
+void clearLobbyData() {
+  for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
+    activeLobbyPlayers[i] = false;
+    fundedLobbyPlayers[i] = false;
+  }
+  registeredCount = 0;
+  requiredPlayerCount = 0;
+  setLobbyMessage("tap player cards");
 }
 
 const char *stateName(UiState state) {
@@ -86,6 +113,8 @@ const char *stateName(UiState state) {
       return "DEBT";
     case UiState::GO:
       return "GO";
+    case UiState::TRAIN:
+      return "TRAIN";
     case UiState::JAIL:
       return "JAIL";
     case UiState::WINNER:
@@ -247,8 +276,58 @@ void handleButtons() {
     return;
   }
 
+  if (appMode == AppMode::LobbyRegister) {
+    if (b1 == ButtonPress::Short) {
+      clearLobbyData();
+      logLine("[LOBBY] cleared");
+      sound.beepTick();
+    }
+    if (b3 == ButtonPress::Short) {
+      if (registeredCount >= 2) {
+        requiredPlayerCount = registeredCount;
+        for (uint8_t i = 0; i < GAME_MAX_PLAYERS; i++) {
+          if (!activeLobbyPlayers[i]) continue;
+          fundedLobbyPlayers[i] = true;
+          game.primePlayer(i + 1, STARTING_MONEY);
+        }
+        appMode = AppMode::Running;
+        setLobbyMessage("players funded, game start");
+        logf("[LOBBY] game start with %u players", requiredPlayerCount);
+        sound.beepOk();
+      } else {
+        setLobbyMessage("need at least 2 players");
+        sound.beepError();
+      }
+    }
+    return;
+  }
+
   // Physical mapping:
   // BTN1 = X (cancel/back), BTN2 = M (mode/special), BTN3 = CHECK (confirm)
+  if (actionMenuOpen) {
+    if (b2 == ButtonPress::Short) {
+      actionMenuIndex = (actionMenuIndex + 1) % 3;
+      uiDirty = true;
+      sound.beepTick();
+      logf("[MENU] next option=%u", actionMenuIndex);
+    }
+    if (b1 == ButtonPress::Short) {
+      actionMenuOpen = false;
+      uiDirty = true;
+      sound.beepTick();
+      logLine("[MENU] close");
+    }
+    if (b3 == ButtonPress::Short) {
+      actionMenuOpen = false;
+      game.triggerMenuAction(actionMenuIndex);
+      uiDirty = true;
+      sound.beepOk();
+      logf("[MENU] selected option=%u", actionMenuIndex);
+      logStateTransition("MENU_SELECT");
+    }
+    return;
+  }
+
   if (b1 == ButtonPress::Short) {
     logLine("[BTN] X pressed");
     game.onBtn2();
@@ -256,10 +335,18 @@ void handleButtons() {
     logStateTransition("X");
   }
   if (b2 == ButtonPress::Short) {
-    logLine("[BTN] M pressed");
-    game.onBtn3();
-    sound.beepTick();
-    logStateTransition("M");
+    if (game.state() == UiState::HOME) {
+      actionMenuOpen = true;
+      actionMenuIndex = 0;
+      uiDirty = true;
+      sound.beepTick();
+      logLine("[MENU] open");
+    } else {
+      logLine("[BTN] M pressed");
+      game.onBtn3();
+      sound.beepTick();
+      logStateTransition("M");
+    }
   }
   if (b3 == ButtonPress::Short) {
     logLine("[BTN] CHECK pressed");
@@ -310,6 +397,30 @@ void handleProgramCombo() {
 void handleCardTap() {
   CardTap tap{};
   if (!nfc.poll(tap)) return;
+
+  if (appMode == AppMode::LobbyRegister) {
+    PlayerCardData player{};
+    if (!cards->readPlayer(tap, player)) {
+      setLobbyMessage("tap a PLAYER card");
+      sound.beepError();
+      return;
+    }
+    if (player.playerId < 1 || player.playerId > GAME_MAX_PLAYERS) {
+      setLobbyMessage("player id out of range");
+      sound.beepError();
+      return;
+    }
+    const uint8_t idx = player.playerId - 1;
+    if (!activeLobbyPlayers[idx]) {
+      activeLobbyPlayers[idx] = true;
+      registeredCount++;
+      logf("[LOBBY] registered player=%u total=%u", player.playerId, registeredCount);
+    }
+    setLobbyMessage("player registered");
+    uiDirty = true;
+    sound.beepOk();
+    return;
+  }
 
   if (programmingMode) {
     if (!programArmed) {
@@ -380,6 +491,14 @@ void handleCardTap() {
   if (type == NfcCardType::PLAYER) {
     PlayerCardData player{};
     if (cards->readPlayer(tap, player)) {
+      if (appMode == AppMode::Running) {
+        if (player.playerId < 1 || player.playerId > GAME_MAX_PLAYERS || !activeLobbyPlayers[player.playerId - 1]) {
+          setLobbyMessage("player not in this game");
+          uiDirty = true;
+          sound.beepError();
+          return;
+        }
+      }
       logf("[NFC] player card scanned id=%u balance=%ld jailed=%u bankrupt=%u", player.playerId, (long)player.balance, player.jailed, player.bankrupt);
       printUid(tap);
       Serial.println();
@@ -452,7 +571,7 @@ void refreshUi(bool force = false) {
   }
 
   bool animDirty = false;
-  const bool waitAnim = (!programmingMode && game.state() == UiState::WAIT_CARD);
+  const bool waitAnim = (!programmingMode && appMode == AppMode::Running && !actionMenuOpen && game.state() == UiState::WAIT_CARD);
   if (waitAnim) {
     const int8_t phase = static_cast<int8_t>((now / 120) % 2);
     if (phase != lastWaitAnimPhase) {
@@ -463,7 +582,7 @@ void refreshUi(bool force = false) {
     lastWaitAnimPhase = -1;
   }
 
-  const bool gameDirty = (!programmingMode && game.isDirty());
+  const bool gameDirty = (!programmingMode && appMode == AppMode::Running && !actionMenuOpen && game.isDirty());
   const bool needsRender = force || uiDirty || gameDirty || animDirty;
 
   if (!needsRender) {
@@ -472,6 +591,10 @@ void refreshUi(bool force = false) {
 
   if (programmingMode) {
     ui.renderProgramming(programCategoryName(programCategory), programIndex + 1, programDetail, programArmed, programMessage);
+  } else if (appMode != AppMode::Running) {
+    ui.renderLobby(registeredCount, registeredCount, activeLobbyPlayers, false, lobbyMessage);
+  } else if (actionMenuOpen) {
+    ui.renderActionMenu(actionMenuIndex);
   } else {
     ui.render(game, battery.readPercent());
     game.clearDirty();
@@ -487,6 +610,7 @@ void setup() {
   Serial0.begin(115200);
   delay(100);
   logLine("[BOOT] booting...");
+  logLine("[BOOT] RAM_MODE: gameplay money/property kept in memory (no gameplay card writes)");
 
   pinMode(PIN_BTN1, INPUT_PULLUP);
   pinMode(PIN_BTN2, INPUT_PULLUP);
@@ -508,6 +632,8 @@ void setup() {
   cards = new CardManager(nfc.driver());
 
   game.begin();
+  clearLobbyData();
+  appMode = AppMode::LobbyRegister;
   updateProgramDetail();
   lastState = game.state();
   logf("[BOOT] game state: %s", stateName(lastState));
@@ -524,7 +650,7 @@ void loop() {
   handleProgramCombo();
   handleButtons();
   handleCardTap();
-  if (!programmingMode) {
+  if (!programmingMode && appMode == AppMode::Running && !actionMenuOpen) {
     game.onTick();
     logStateTransition("TICK");
   }

@@ -11,6 +11,7 @@ enum class UiState : uint8_t {
   AUCTION,
   DEBT,
   GO,
+  TRAIN,
   JAIL,
   WINNER
 };

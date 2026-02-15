@@ -47,8 +47,7 @@ void GameLogic::begin() {
 }
 
 void GameLogic::markPropertyDirty(uint8_t propertyId) {
-  if (propertyId < 1 || propertyId > PROPERTY_COUNT) return;
-  propertyDirty_[propertyId - 1] = true;
+  (void)propertyId;
 }
 
 void GameLogic::setState(UiState next) {
@@ -216,6 +215,16 @@ void GameLogic::startAuction(uint8_t propertyId) {
   setState(UiState::AUCTION);
 }
 
+void GameLogic::primePlayer(uint8_t playerId, int32_t balance) {
+  ensurePlayer(playerId);
+  PlayerState *p = playerById(playerId);
+  if (!p) return;
+  p->balance = balance;
+  p->jailed = false;
+  p->bankrupt = false;
+  touchState();
+}
+
 void GameLogic::onBtn1() {
   if (state_ == UiState::HOME) {
     ctx_ = {};
@@ -262,10 +271,24 @@ void GameLogic::onBtn3() {
   }
 }
 
+void GameLogic::triggerMenuAction(uint8_t action) {
+  if (state_ != UiState::HOME) {
+    return;
+  }
+  ctx_ = {};
+  if (action == 0) {
+    setState(UiState::GO);
+  } else if (action == 1) {
+    setState(UiState::JAIL);
+  } else if (action == 2) {
+    setState(UiState::TRAIN);
+  }
+}
+
 void GameLogic::onTick() {
   const uint32_t now = millis();
 
-  if (state_ == UiState::WAIT_CARD || state_ == UiState::GO || state_ == UiState::JAIL) {
+  if (state_ == UiState::WAIT_CARD || state_ == UiState::GO || state_ == UiState::TRAIN || state_ == UiState::JAIL) {
     if (now - stateSinceMs_ > WAIT_TIMEOUT_MS) {
       ctx_ = {};
       setFlash(ctx_, "TIMEOUT");
@@ -308,14 +331,8 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
   PlayerState *player = playerById(card.playerId);
   if (!player) return;
 
-  player->jailed = card.jailed > 0;
-  player->bankrupt = card.bankrupt > 0;
-  player->balance = card.balance;
-
   if (state_ == UiState::GO) {
     player->balance += 200;
-    card.balance = player->balance;
-    cards.writePlayer(tap, card);
     ctx_ = {};
     setFlash(ctx_, "+200");
     setState(UiState::HOME);
@@ -326,17 +343,26 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
     if (player->balance >= 100) {
       player->balance -= 100;
       player->jailed = false;
-      card.balance = player->balance;
-      card.jailed = 0;
-      cards.writePlayer(tap, card);
       ctx_ = {};
       setFlash(ctx_, "JAIL -100");
       setState(UiState::HOME);
     } else {
       const int32_t left = 100 - player->balance;
       player->balance = 0;
-      card.balance = 0;
-      cards.writePlayer(tap, card);
+      enterDebt(player->id, 0, left);
+    }
+    return;
+  }
+
+  if (state_ == UiState::TRAIN) {
+    if (player->balance >= 100) {
+      player->balance -= 100;
+      ctx_ = {};
+      setFlash(ctx_, "TRAIN -100");
+      setState(UiState::HOME);
+    } else {
+      const int32_t left = 100 - player->balance;
+      player->balance = 0;
       enterDebt(player->id, 0, left);
     }
     return;
@@ -351,16 +377,12 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       prop->ownerId = player->id;
       prop->level = 1;
       markPropertyDirty(prop->id);
-      card.balance = player->balance;
-      cards.writePlayer(tap, card);
       ctx_ = {};
       setFlash(ctx_, "PURCHASE");
       setState(UiState::HOME);
     } else {
       const int32_t left = price - player->balance;
       player->balance = 0;
-      card.balance = 0;
-      cards.writePlayer(tap, card);
       enterDebt(player->id, 0, left);
     }
     return;
@@ -388,9 +410,6 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       owner->balance += rent;
       if (prop->level < kMaxLevel) prop->level++;
       markPropertyDirty(prop->id);
-
-      card.balance = player->balance;
-      cards.writePlayer(tap, card);
       ctx_ = {};
       setFlash(ctx_, "RENT PAID");
       setState(UiState::HOME);
@@ -398,8 +417,6 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       owner->balance += player->balance;
       const int32_t left = rent - player->balance;
       player->balance = 0;
-      card.balance = 0;
-      cards.writePlayer(tap, card);
       enterDebt(player->id, owner->id, left);
     }
     return;
@@ -414,10 +431,6 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       }
     }
     applyEventToPlayer(event, player->id);
-    card.balance = player->balance;
-    card.jailed = player->jailed ? 1 : 0;
-    card.bankrupt = player->bankrupt ? 1 : 0;
-    cards.writePlayer(tap, card);
     return;
   }
 
@@ -430,16 +443,12 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
       prop->ownerId = player->id;
       prop->level = 1;
       markPropertyDirty(prop->id);
-      card.balance = player->balance;
-      cards.writePlayer(tap, card);
       ctx_ = {};
       setFlash(ctx_, "AUCTION OK");
       setState(UiState::HOME);
     } else {
       const int32_t left = bid - player->balance;
       player->balance = 0;
-      card.balance = 0;
-      cards.writePlayer(tap, card);
       enterDebt(player->id, 0, left);
     }
     return;
@@ -453,6 +462,7 @@ void GameLogic::onPlayerCard(const CardTap &tap, CardManager &cards) {
 }
 
 void GameLogic::onPropertyCard(const CardTap &tap, CardManager &cards) {
+  (void)cards;
   PropertyCardData card{};
   if (!cards.readProperty(tap, card)) {
     return;
@@ -461,20 +471,7 @@ void GameLogic::onPropertyCard(const CardTap &tap, CardManager &cards) {
   PropertyState *prop = propertyById(card.propertyId);
   if (!prop) return;
 
-  if (propertyDirty_[prop->id - 1]) {
-    card.ownerId = prop->ownerId;
-    card.level = prop->level;
-    card.basePrice = prop->basePrice;
-    cards.writeProperty(tap, card);
-    propertyDirty_[prop->id - 1] = false;
-  } else {
-    if (card.basePrice == 0) {
-      card.basePrice = prop->basePrice;
-      cards.writeProperty(tap, card);
-    }
-
-    prop->ownerId = card.ownerId;
-    prop->level = card.level < 1 ? 1 : card.level;
+  if (card.basePrice > 0) {
     prop->basePrice = card.basePrice;
     prop->baseRent = card.basePrice / 4;
     if (prop->baseRent < 20) prop->baseRent = 20;
@@ -482,9 +479,6 @@ void GameLogic::onPropertyCard(const CardTap &tap, CardManager &cards) {
 
   if (state_ == UiState::DEBT) {
     settleDebtWithProperty(prop->id);
-    card.ownerId = prop->ownerId;
-    card.level = prop->level;
-    cards.writeProperty(tap, card);
     return;
   }
 
