@@ -270,7 +270,7 @@ void DisplayUi::drawPropertyUnowned(const GameLogic &game, const ActionContext &
 void DisplayUi::drawPropertyOwned(const GameLogic &game, const ActionContext &ctx) {
   tft_.fillRect(0, 24, SCREEN_W, SCREEN_H - 24, BG);
   const PropertyState *prop = &game.properties()[ctx.propertyId - 1];
-  const int rent = prop->baseRent * prop->level;
+  const int rent = game.propertyRent(prop->id, prop->level);
   tft_.setTextColor(FG);
   tft_.drawRect(6, 28, SCREEN_W - 12, 176, FG);
   tft_.setTextSize(1);

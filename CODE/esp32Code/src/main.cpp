@@ -92,7 +92,7 @@ void clearLobbyData() {
   }
   registeredCount = 0;
   requiredPlayerCount = 0;
-  setLobbyMessage("tap player cards");
+  setLobbyMessage(TXT("tap player cards", "toca cartas de jugador"));
 }
 
 const char *stateName(UiState state) {
@@ -172,11 +172,11 @@ ButtonPress pollButton(ButtonInput &btn) {
 const char *programCategoryName(ProgramCategory cat) {
   switch (cat) {
     case ProgramCategory::Player:
-      return "PLAYER";
+      return TXT("PLAYER", "JUGADOR");
     case ProgramCategory::Property:
-      return "PLACE";
+      return TXT("PROPERTY", "PROPIEDAD");
     case ProgramCategory::Event:
-      return "SPECIAL";
+      return TXT("CHANCE", "SUERTE");
   }
   return "?";
 }
@@ -207,7 +207,7 @@ void updateProgramDetail() {
   }
   if (programCategory == ProgramCategory::Property) {
     const uint8_t id = programIndex + 1;
-    const uint16_t price = 80 + static_cast<uint16_t>(id * 12.5f + 0.5f);
+    const uint16_t price = game.propertyPrice(id);
     snprintf(programDetail, sizeof(programDetail), "#%u COST %u", id, price);
     logProgramSelection();
     uiDirty = true;
@@ -268,7 +268,7 @@ void handleButtons() {
 
     if (b2 == ButtonPress::Short) {
       programArmed = true;
-      setProgramMessage("TAP CARD", 2000);
+      setProgramMessage(TXT("TAP CARD", "TOCA CARTA"), 2000);
       logLine("[PROG] arm write, waiting for card");
       sound.beepTick();
       uiDirty = true;
@@ -291,11 +291,11 @@ void handleButtons() {
           game.primePlayer(i + 1, STARTING_MONEY);
         }
         appMode = AppMode::Running;
-        setLobbyMessage("players funded, game start");
+        setLobbyMessage(TXT("players funded, game start", "jugadores con saldo, inicia juego"));
         logf("[LOBBY] game start with %u players", requiredPlayerCount);
         sound.beepOk();
       } else {
-        setLobbyMessage("need at least 2 players");
+        setLobbyMessage(TXT("need at least 2 players", "se necesitan al menos 2 jugadores"));
         sound.beepError();
       }
     }
@@ -384,10 +384,10 @@ void handleProgramCombo() {
     programCategory = ProgramCategory::Player;
     programIndex = 0;
     updateProgramDetail();
-    setProgramMessage("PROGRAM MODE", 1200);
+    setProgramMessage(TXT("PROGRAM MODE", "MODO PROGRAMA"), 1200);
     logLine("[PROG] enabled");
   } else {
-    setProgramMessage("PROGRAM OFF", 1200);
+    setProgramMessage(TXT("PROGRAM OFF", "PROGRAMA OFF"), 1200);
     logLine("[PROG] disabled");
   }
   sound.beepOk();
@@ -397,30 +397,6 @@ void handleProgramCombo() {
 void handleCardTap() {
   CardTap tap{};
   if (!nfc.poll(tap)) return;
-
-  if (appMode == AppMode::LobbyRegister) {
-    PlayerCardData player{};
-    if (!cards->readPlayer(tap, player)) {
-      setLobbyMessage("tap a PLAYER card");
-      sound.beepError();
-      return;
-    }
-    if (player.playerId < 1 || player.playerId > GAME_MAX_PLAYERS) {
-      setLobbyMessage("player id out of range");
-      sound.beepError();
-      return;
-    }
-    const uint8_t idx = player.playerId - 1;
-    if (!activeLobbyPlayers[idx]) {
-      activeLobbyPlayers[idx] = true;
-      registeredCount++;
-      logf("[LOBBY] registered player=%u total=%u", player.playerId, registeredCount);
-    }
-    setLobbyMessage("player registered");
-    uiDirty = true;
-    sound.beepOk();
-    return;
-  }
 
   if (programmingMode) {
     if (!programArmed) {
@@ -444,7 +420,7 @@ void handleCardTap() {
       property.propertyId = id;
       property.ownerId = 0;
       property.level = 1;
-      property.basePrice = 80 + static_cast<uint16_t>(id * 12.5f + 0.5f);
+      property.basePrice = game.propertyPrice(id);
       ok = cards->writeProperty(tap, property);
       logf("[PROG] write place id=%u price=%u result=%s", id, property.basePrice, ok ? "ok" : "fail");
     } else {
@@ -477,13 +453,37 @@ void handleCardTap() {
     Serial.println();
     Serial0.println();
     if (ok) {
-      setProgramMessage("WRITE OK", 1200);
+      setProgramMessage(TXT("WRITE OK", "GRABADO OK"), 1200);
       sound.beepOk();
     } else {
-      setProgramMessage("WRITE FAIL", 1200);
+      setProgramMessage(TXT("WRITE FAIL", "GRABADO FAIL"), 1200);
       sound.beepError();
     }
     programArmed = false;
+    return;
+  }
+
+  if (appMode == AppMode::LobbyRegister) {
+    PlayerCardData player{};
+    if (!cards->readPlayer(tap, player)) {
+      setLobbyMessage(TXT("tap a PLAYER card", "toca una carta de JUGADOR"));
+      sound.beepError();
+      return;
+    }
+    if (player.playerId < 1 || player.playerId > GAME_MAX_PLAYERS) {
+      setLobbyMessage(TXT("player id out of range", "id de jugador fuera de rango"));
+      sound.beepError();
+      return;
+    }
+    const uint8_t idx = player.playerId - 1;
+    if (!activeLobbyPlayers[idx]) {
+      activeLobbyPlayers[idx] = true;
+      registeredCount++;
+      logf("[LOBBY] registered player=%u total=%u", player.playerId, registeredCount);
+    }
+    setLobbyMessage(TXT("player registered", "jugador registrado"));
+    uiDirty = true;
+    sound.beepOk();
     return;
   }
 
@@ -493,7 +493,7 @@ void handleCardTap() {
     if (cards->readPlayer(tap, player)) {
       if (appMode == AppMode::Running) {
         if (player.playerId < 1 || player.playerId > GAME_MAX_PLAYERS || !activeLobbyPlayers[player.playerId - 1]) {
-          setLobbyMessage("player not in this game");
+          setLobbyMessage(TXT("player not in this game", "jugador fuera de esta partida"));
           uiDirty = true;
           sound.beepError();
           return;
