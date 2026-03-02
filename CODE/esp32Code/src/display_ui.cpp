@@ -107,7 +107,7 @@ bool DisplayUi::begin() {
   tft_.init(240, 320);
   tft_.setRotation(3);
   tft_.invertDisplay(false);
-  tft_.setSPISpeed(40000000);
+  tft_.setSPISpeed(8000000);
 
   tft_.fillScreen(ST77XX_RED);
   delay(120);
