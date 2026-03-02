@@ -222,7 +222,7 @@ const PLAYER_TOKENS = {
   ],
 };
 
-let currentLanguage = localStorage.getItem("monopoly-language") || "es";
+let currentLanguage = localStorage.getItem("monopoly-language") || "en";
 
 function tr(key) {
   return (I18N[currentLanguage] && I18N[currentLanguage][key]) || I18N.en[key] || key;
@@ -290,7 +290,7 @@ function getAllCards(options = {}) {
     tokenColor: token.iconColor,
   }));
   const cards = [
-    ...propertyCards.map((card) => ({ ...card, deck: "title" })),
+    ...propertyCards.map((card) => ({ ...card, price: card.price ?? card.rents[0], deck: "title" })),
     ...playerCards,
   ];
 

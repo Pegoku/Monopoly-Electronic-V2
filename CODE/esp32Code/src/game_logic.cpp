@@ -6,6 +6,47 @@
 namespace {
 constexpr uint8_t kMaxLevel = 5;
 
+constexpr uint8_t kPropertyTableCount = 22;
+constexpr uint16_t kPropertyLevelValues[kPropertyTableCount][kMaxLevel] = {
+    {70, 130, 220, 370, 750},
+    {70, 130, 220, 370, 750},
+    {80, 140, 240, 410, 800},
+    {80, 140, 240, 410, 800},
+    {100, 160, 260, 440, 860},
+    {110, 180, 290, 460, 900},
+    {110, 180, 290, 460, 900},
+    {130, 200, 310, 490, 980},
+    {140, 210, 330, 520, 1000},
+    {140, 210, 330, 520, 1000},
+    {160, 230, 350, 550, 1100},
+    {170, 250, 380, 580, 1160},
+    {170, 250, 380, 580, 1160},
+    {190, 270, 400, 610, 1200},
+    {200, 280, 420, 640, 1300},
+    {200, 280, 420, 640, 1300},
+    {220, 300, 440, 670, 1340},
+    {230, 320, 460, 700, 1400},
+    {230, 320, 460, 700, 1400},
+    {250, 340, 480, 730, 1440},
+    {270, 360, 510, 740, 1500},
+    {300, 400, 560, 810, 1600},
+};
+
+uint16_t fallbackPropertyBasePrice(uint8_t propertyId) {
+  return 80 + static_cast<uint16_t>(propertyId * 12.5f + 0.5f);
+}
+
+uint16_t propertyValueByLevel(uint8_t propertyId, uint8_t level) {
+  if (level < 1) level = 1;
+  if (level > kMaxLevel) level = kMaxLevel;
+  if (propertyId >= 1 && propertyId <= kPropertyTableCount) {
+    return kPropertyLevelValues[propertyId - 1][level - 1];
+  }
+
+  const uint16_t basePrice = fallbackPropertyBasePrice(propertyId);
+  return basePrice * level;
+}
+
 EventCardData makeEvent(uint8_t id, EventType type, int16_t value) {
   EventCardData e;
   e.eventId = id;
@@ -32,13 +73,12 @@ void setFlash(ActionContext &ctx, const char *text) {
 void GameLogic::begin() {
   for (uint8_t i = 0; i < PROPERTY_COUNT; i++) {
     const uint8_t id = i + 1;
-    const uint16_t price = 80 + static_cast<uint16_t>(id * 12.5f + 0.5f);
+    const uint16_t price = propertyValueByLevel(id, 1);
     properties_[i].id = id;
     properties_[i].ownerId = 0;
     properties_[i].level = 1;
     properties_[i].basePrice = price;
-    properties_[i].baseRent = price / 4;
-    if (properties_[i].baseRent < 20) properties_[i].baseRent = 20;
+    properties_[i].baseRent = price;
   }
   for (uint8_t i = 0; i < PROPERTY_COUNT; i++) {
     propertyDirty_[i] = false;
@@ -91,9 +131,7 @@ uint16_t GameLogic::propertyPrice(uint8_t propertyId) const {
 
 uint16_t GameLogic::propertyRent(uint8_t propertyId, uint8_t level) const {
   if (propertyId < 1 || propertyId > PROPERTY_COUNT) return 0;
-  if (level < 1) level = 1;
-  if (level > kMaxLevel) level = kMaxLevel;
-  return properties_[propertyId - 1].baseRent * level;
+  return propertyValueByLevel(propertyId, level);
 }
 
 void GameLogic::enterDebt(uint8_t debtorId, uint8_t creditorId, int32_t amount) {
@@ -473,8 +511,7 @@ void GameLogic::onPropertyCard(const CardTap &tap, CardManager &cards) {
 
   if (card.basePrice > 0) {
     prop->basePrice = card.basePrice;
-    prop->baseRent = card.basePrice / 4;
-    if (prop->baseRent < 20) prop->baseRent = 20;
+    prop->baseRent = card.basePrice;
   }
 
   if (state_ == UiState::DEBT) {

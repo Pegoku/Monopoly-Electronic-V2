@@ -32,6 +32,8 @@ class GameLogic {
   void triggerMenuAction(uint8_t action);
   void primePlayer(uint8_t playerId, int32_t balance);
   void onTick();
+  uint16_t propertyPrice(uint8_t propertyId) const;
+  uint16_t propertyRent(uint8_t propertyId, uint8_t level) const;
 
   void onPlayerCard(const CardTap &tap, CardManager &cards);
   void onPropertyCard(const CardTap &tap, CardManager &cards);
@@ -46,8 +48,6 @@ class GameLogic {
   void ensurePlayer(uint8_t playerId);
   PlayerState *playerById(uint8_t playerId);
   PropertyState *propertyById(uint8_t propertyId);
-  uint16_t propertyPrice(uint8_t propertyId) const;
-  uint16_t propertyRent(uint8_t propertyId, uint8_t level) const;
   void enterDebt(uint8_t debtorId, uint8_t creditorId, int32_t amount);
   void settleDebtWithProperty(uint8_t propertyId);
   void resolveWinner();
