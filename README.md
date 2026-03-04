@@ -7,6 +7,10 @@ This is a recreation of the classic Monopoly Electronic Banking game using moder
 
 ## Images
 
+### Final product
+
+![Final Product](media/4cc246f8-f43e-4b3a-951f-9866eccbec2b~1.jpg)
+
 ### CAD
 
 ![](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjY1NywicHVyIjoiYmxvYl9pZCJ9fQ==--bc2c30c56350df59febc6f633cd2e3b3379b195d/image.png)
