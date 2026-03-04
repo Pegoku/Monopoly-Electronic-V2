@@ -1,24 +1,84 @@
 # Monopoly-Electronic-V2
 This is a recreation of the classic Monopoly Electronic Banking game using modern technology. The project utilizes an ESP32 microcontroller to handle game logic and interactions, along with a Touch LCD display and RFID readers for player identification and transactions.
 
+## Demo
+
+[Demo Video](https://youtube.com/shorts/_shUK3fcT8k?feature=share)
+
 ## Images
+
+### CAD
 
 ![](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjY1NywicHVyIjoiYmxvYl9pZCJ9fQ==--bc2c30c56350df59febc6f633cd2e3b3379b195d/image.png)
 
+
 <details>
-<summary>Xray view — click to expand</summary>
+<summary>Xray view - click to expand</summary>
 
 ![Xray view](https://blueprint.hackclub.com/user-attachments/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MjY1NiwicHVyIjoiYmxvYl9pZCJ9fQ==--c499de0187d5ce8f9409b72507ef98df3cee443f/image.png)
 
 </details>
 
+
+### PCB
+
+![](media/pcb_render.png)
+
+![](media/pcb.png)
+
+
+<details>
+<summary>Schematic - click to expand</summary>
+
+![Schematic](media/sch1.png)
+![Schematic](media/sch2.png)
+
+</details>
+
+
+
 ## Features
 - Electronic banking system using RFID cards for a more reliable process.
-- Touchscreen interface for easy navigation and game management.
 - Support for multiple players with individual RFID cards.
 - Real-time game state updates displayed on the LCD.
 - Sound effects for an immersive gaming experience.
 - Customizable game rules and settings.
+
+
+## UI
+
+### Player registration
+
+![Player Registration](media/Screenshot_2026-03-04_21.08.16.png)
+
+
+### Main game screen
+
+![Main Game Screen](media/Screenshot_2026-03-04_21.08.20.png)
+
+
+### Card interaction
+
+![Card Interaction](media/Screenshot_2026-03-04_21.08.34.png)
+
+
+## How the Game Works
+
+Gameplay focuses on **NFC interaction instead of menus**.
+
+Players throw the dice, and depending on where they land, they interact with the game console using their RFID cards. For example, if a player lands on a property, they can use their card to purchase it, or pay rent.
+
+The game keeps track of each player's balance and properties, and updates the display accordingly. The use of RFID cards allows for a more seamless and engaging gaming experience, as players can quickly and easily interact with the game without navigating through complex menus. 
+
+When a player has not enough money to pay rent or buy a property, they can choose to mortgage their properties or declare bankruptcy. The game will automatically handle these situations and update the game state accordingly.
+
+If a player doesn't have enough money to pay rent, they will be bankrupt and removed from the game. The last player remaining with money wins the game.
+
+
+### Card programming
+
+To program the RFID cards, you can use the programming mode in the game console. Simply press the two side buttons simultaneously for 10 seconds to enter programming mode. Then, place the card you want to program on the console and follow the prompts on the LCD display to assign a player name, land.
+
 
 ## BOM (Bill of Materials)
 | Index | MPN                      | Description                                          | pack quantity | price | TOTAL  |

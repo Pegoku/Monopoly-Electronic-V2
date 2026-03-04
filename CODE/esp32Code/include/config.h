@@ -66,10 +66,24 @@
 #define PIN_BTN3         PIN_BTN_RIGHT
 
 // =============================================================================
+// DISPLAY SPI SPEED (compile-time override)
+// Example: -DTFT_SPI_HZ=4000000
+// =============================================================================
+#ifndef TFT_SPI_HZ
+  #define TFT_SPI_HZ 8000000
+#endif
+
+// =============================================================================
 // DISPLAY
 // =============================================================================
 #define SCREEN_W         320
 #define SCREEN_H         240
+
+// Rotate screen 180 degrees from the default orientation.
+// Set to 0 to use the default orientation.
+#ifndef TFT_ROTATE_180
+  #define TFT_ROTATE_180 1
+#endif
 
 // =============================================================================
 // GAME CONSTANTS

@@ -105,9 +105,13 @@ bool DisplayUi::begin() {
   SPI.begin(PIN_TFT_SCLK, PIN_TFT_MISO, PIN_TFT_MOSI, PIN_TFT_CS);
 
   tft_.init(240, 320);
+#if TFT_ROTATE_180
+  tft_.setRotation(1);
+#else
   tft_.setRotation(3);
+#endif
   tft_.invertDisplay(false);
-  tft_.setSPISpeed(8000000);
+  tft_.setSPISpeed(40000000);
 
   tft_.fillScreen(ST77XX_RED);
   delay(120);
